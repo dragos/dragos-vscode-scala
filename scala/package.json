@@ -1,0 +1,26 @@
+{
+    "name": "language-scala",
+    "displayName": "Dragos Scala Support",
+    "description": "Dragos Scala Language Support",
+    "version": "0.0.1",
+    "publisher": "dragos",
+    "engines": {
+        "vscode": "^0.10.10"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "scala",
+            "aliases": ["Scala", "scala"],
+            "extensions": [".scala"],
+            "configuration": "./scala.configuration.json"
+        }],
+        "grammars": [{
+            "language": "scala",
+            "scopeName": "source.scala",
+            "path": "./syntaxes/scala.tmLanguage"
+        }]
+    }
+}
