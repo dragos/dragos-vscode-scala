@@ -11,10 +11,14 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, T
 
 export function activate(context: ExtensionContext) {
 
-	// The server is implemented in Scala
-	let assemblyPath = path.join(context.extensionPath, "../languageserver/target/scala-2.11/languageserver-assembly-0.1.0.jar")
+	
+	let toolsJar = process.env.JAVA_HOME + "/lib/tools.jar"
+  console.info("Adding to classpath " + toolsJar);
 
-	let javaArgs = [ "-jar", assemblyPath ];
+	// The server is implemented in Scala
+	let assemblyPath = path.join(context.extensionPath, "../ensime-server/target/scala-2.11/ensimeServer-assembly-0.1.0.jar")
+
+	let javaArgs = [ "-cp", toolsJar + ":" + assemblyPath, "org.github.dragos.vscode.Main" ];
 	// The debug options for the server
 	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
 	

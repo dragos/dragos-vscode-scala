@@ -1,9 +1,11 @@
 name := "vscode-scala"
 
+
+scalaVersion in ThisBuild := "2.11.8"
+
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
   version := "0.1.0",
-  scalaVersion := "2.11.8",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven"
 )
 
@@ -18,4 +20,20 @@ lazy val languageserver = project.
       "org.scalatest" %% "scalatest" % "2.2.6" % "test",
       "org.codehaus.groovy" % "groovy" % "2.4.0"
     )
+  )
+
+lazy val ensimeServer = project.
+  in(file("ensime-server")).
+  dependsOn(languageserver).
+  settings(commonSettings:_*).
+  settings(
+    libraryDependencies ++= Seq(
+      "org.ensime" %% "core" % "1.0.0"
+    ),
+    assemblyMergeStrategy in assembly := {
+      case PathList("org", "apache", "commons", "vfs2", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
+      case PathList("scala", "reflect", "io", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
+      case PathList("logback.groovy", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
+      case other => MergeStrategy.defaultMergeStrategy(other)
+    }
   )
