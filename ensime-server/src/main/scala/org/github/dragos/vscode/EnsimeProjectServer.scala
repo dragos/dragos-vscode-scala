@@ -12,8 +12,12 @@ import com.typesafe.scalalogging.LazyLogging
 
 import akka.actor.Actor
 import akka.util.Timeout
+import langserver.core.Connection
+import langserver.types._
+import java.net.URI
+import langserver.messages.MessageType
 
-class EnsimeProjectServer(implicit val config: EnsimeConfig) extends Actor with LazyLogging {
+class EnsimeProjectServer(connection: Connection, implicit val config: EnsimeConfig) extends Actor with LazyLogging {
   implicit val timeout: Timeout = Timeout(10 seconds)
 
   val broadcaster = context.actorOf(Broadcaster(), "broadcaster")
@@ -35,6 +39,7 @@ class EnsimeProjectServer(implicit val config: EnsimeConfig) extends Actor with 
 
     case AnalyzerReadyEvent =>
       logger.info("Analyzer is ready!")
+      connection.showMessage(MessageType.Info, "Ensime is ready")
 
     case FullTypeCheckCompleteEvent =>
       logger.info("Full typecheck complete event")
@@ -44,6 +49,26 @@ class EnsimeProjectServer(implicit val config: EnsimeConfig) extends Actor with 
   }
 
   private def publishDiagnostics(): Unit = {
-    logger.debug(s"Scala notes: ${compilerDiagnostics}")
+    logger.debug(s"Scala notes: ${compilerDiagnostics.mkString("\n")}")
+
+    for ((file, notes) <- compilerDiagnostics.groupBy(_.file))
+      connection.publishDiagnostics(s"file://$file", notes.map(toDiagnostic))
+  }
+
+  private def toDiagnostic(note: Note): Diagnostic = {
+    val start: Int = note.beg
+    val end: Int = note.end
+    val length = end - start
+
+    val severity = note.severity match {
+      case NoteError => DiagnosticSeverity.Error
+      case NoteWarn => DiagnosticSeverity.Warning
+      case NoteInfo => DiagnosticSeverity.Information
+    }
+
+    // Scalac reports 1-based line and columns, while Code expects 0-based
+    val range = Range(Position(note.line - 1, note.col - 1), Position(note.line - 1, note.col - 1 + length))
+
+    Diagnostic(range, Some(severity), code = None, source = Some("Scala"), message = note.msg)
   }
 }

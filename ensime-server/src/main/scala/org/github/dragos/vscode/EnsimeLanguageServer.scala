@@ -22,6 +22,7 @@ import akka.actor.Props
 import org.ensime.api.TypecheckFileReq
 import java.net.URI
 import scalariform.formatter.preferences.FormattingPreferences
+import org.ensime.core.ShutdownRequest
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
   private val system = ActorSystem("ENSIME")
@@ -51,13 +52,13 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
       EnsimeConfigProtocol.parse(Files.toString(ensimeFile, Charsets.UTF_8))
     } catch {
       case e: Throwable =>
-        showMessage(MessageType.Error, s"There was a problem parsing $ensimeFile ${e.getMessage}")
+        connection.showMessage(MessageType.Error, s"There was a problem parsing $ensimeFile ${e.getMessage}")
         noConfig
     }
-    showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
+    //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
     logger.info(s"Using configuration: $config")
 
-    ensimeProject = system.actorOf(Props(classOf[EnsimeProjectServer], config))
+    ensimeProject = system.actorOf(Props(classOf[EnsimeProjectServer], connection, config))
 
     // we don't give a damn about them, but Ensime expects it
     ensimeProject ! ConnectionInfoReq
@@ -87,10 +88,14 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def onSaveTextDocument(td: TextDocumentIdentifier) = {
     logger.debug(s"saveTextDocuemnt $td")
-    showMessage(MessageType.Info, s"Saved text document ${td.uri}")
   }
 
   override def onCloseTextDocument(td: TextDocumentIdentifier) = {
     logger.debug(s"closeTextDocuemnt $td")
+  }
+
+  override def shutdown() {
+    logger.info("Shutdown request")
+    ensimeProject ! ShutdownRequest("Requested by client")
   }
 }
