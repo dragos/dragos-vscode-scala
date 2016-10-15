@@ -18,9 +18,9 @@ export function activate(context: ExtensionContext) {
 	// The server is implemented in Scala
 	let assemblyPath = path.join(context.extensionPath, "../ensime-server/target/scala-2.11/ensimeServer-assembly-0.1.0.jar")
 
-	let javaArgs = [ "-cp", toolsJar + ":" + assemblyPath, "org.github.dragos.vscode.Main" ];
+	let javaArgs = [ "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y", "-cp", toolsJar + ":" + assemblyPath, "org.github.dragos.vscode.Main" ];
 	// The debug options for the server
-	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
+	let debugOptions = { execArgv: ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000"] };
 	
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used

@@ -45,6 +45,7 @@ class EnsimeProjectServer(langServer: EnsimeLanguageServer, implicit val config:
       langServer.publishDiagnostics(compilerDiagnostics.toList)
 
     case message =>
+      logger.debug(s"Forwarding $message")
       project forward message
   }
 

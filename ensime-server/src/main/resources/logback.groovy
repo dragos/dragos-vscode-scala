@@ -2,7 +2,7 @@ appender("FILE", FileAppender) {
   file = "ensime-langserver.log"
   append = false
   encoder(PatternLayoutEncoder) {
-    pattern = "%level %logger - %msg%n"
+    pattern = "[%d] %level %logger - %msg%n"
   }
 }
 
