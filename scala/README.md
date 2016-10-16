@@ -4,3 +4,4 @@ This extension installs an Ensime-based Scala language server. At the moment, th
 
 - errors as you type
 - code completion
+- goto definition (F12 and CMD-F12)
