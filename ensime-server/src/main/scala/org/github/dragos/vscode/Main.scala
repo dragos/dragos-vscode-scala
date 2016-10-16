@@ -10,5 +10,8 @@ object Main extends LazyLogging {
 
     val server = new EnsimeLanguageServer(System.in, System.out)
     server.start()
+
+    // make sure we actually exit
+    System.exit(0)
   }
 }

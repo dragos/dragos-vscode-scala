@@ -1,5 +1,10 @@
+def WORKSPACE_LOCATION = System.getProperty("vscode.workspace")
+
+if (WORKSPACE_LOCATION == null)
+  WORKSPACE_LOCATION = System.getProperty("user.home");
+
 appender("FILE", FileAppender) {
-  file = "ensime-langserver.log"
+  file = "${WORKSPACE_LOCATION}/ensime-langserver.log"
   append = false
   encoder(PatternLayoutEncoder) {
     pattern = "[%d] %level %logger - %msg%n"

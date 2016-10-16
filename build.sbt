@@ -42,6 +42,6 @@ lazy val publishExtension = taskKey[Unit]("Copy ensimeServer assembly to extensi
 
 publishExtension := {
   val assemblyFile = (assembly in ensimeServer).value
-  println(s"""Copying $assemblyFile to ${baseDirectory.value / "client" / "server"}.""")
-  IO.copyFile(assemblyFile, baseDirectory.value / "client" / "server" / assemblyFile.getName)
+  println(s"""Copying $assemblyFile to ${baseDirectory.value / "scala" / "server"}.""")
+  IO.copyFile(assemblyFile, baseDirectory.value / "scala" / "server" / assemblyFile.getName)
 }

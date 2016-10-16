@@ -35,6 +35,13 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   private var ensimeProject: ActorRef = _
   implicit val timeout = Timeout(5 seconds)
 
+  override def start() {
+    super.start()
+    // if we got here it means the connection was closed
+    // cleanup and exit
+    shutdown()
+  }
+
   override def initialize(pid: Long, rootPath: String, capabilities: ClientCapabilities): ServerCapabilities = {
     logger.info(s"Initialized with $pid, $rootPath, $capabilities")
 
@@ -111,7 +118,11 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def shutdown() {
     logger.info("Shutdown request")
-    ensimeProject ! ShutdownRequest("Requested by client")
+//    ensimeProject ! ShutdownRequest("Requested by client")
+    system.shutdown()
+    logger.info("Shutting down actor system.")
+    system.awaitTermination()
+    logger.info("Actor system down.")
   }
 
   override def completionRequest(textDocument: TextDocumentIdentifier, position: Position): ResultResponse = {
