@@ -1,13 +1,6 @@
-# README
-## This is the README for your extension "scala"
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Dragos' Scala Language Server
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+This extension installs an Ensime-based Scala language server. At the moment, the following features are supported:
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- errors as you type
+- code completion

@@ -1,7 +1,7 @@
 {
-    "name": "language-scala",
-    "displayName": "Dragos Scala Support",
-    "description": "Dragos Scala Language Support",
+    "name": "ensime-scala",
+    "displayName": "Dragos' Scala Support",
+    "description": "Dragos' Scala Language Support",
     "version": "0.0.1",
     "publisher": "dragos",
     "engines": {
