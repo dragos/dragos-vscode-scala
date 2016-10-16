@@ -13,6 +13,7 @@ import org.ensime.api._
 import org.ensime.api.TypecheckFileReq
 import org.ensime.config.EnsimeConfigProtocol
 import org.ensime.core.ShutdownRequest
+import org.ensime.util.file._
 
 import com.google.common.base.Charsets
 import com.google.common.io.Files
@@ -26,6 +27,7 @@ import langserver.core.LanguageServer
 import langserver.messages._
 import langserver.types._
 import scalariform.formatter.preferences.FormattingPreferences
+import langserver.core.TextDocument
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
   private val system = ActorSystem("ENSIME")
@@ -35,6 +37,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def initialize(pid: Long, rootPath: String, capabilities: ClientCapabilities): ServerCapabilities = {
     logger.info(s"Initialized with $pid, $rootPath, $capabilities")
+
     val rootFile = new File(rootPath)
     val cacheDir = new File(rootFile, ".ensime-vscode-cache")
     cacheDir.mkdir()
@@ -67,7 +70,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     // we don't give a damn about them, but Ensime expects it
     ensimeProject ! ConnectionInfoReq
 
-    ServerCapabilities(completionProvider = Some(CompletionOptions(false, Seq("."))))
+    ServerCapabilities(
+      completionProvider = Some(CompletionOptions(false, Seq("."))),
+      definitionProvider = true)
   }
 
   override def onOpenTextDocument(td: TextDocumentItem) = {
@@ -90,7 +95,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   }
 
   override def onCloseTextDocument(td: TextDocumentIdentifier) = {
-
+    // TODO: unload files from Ensime
   }
 
   def publishDiagnostics(diagnostics: List[Note]) = {
@@ -118,7 +123,6 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
         doc.positionToOffset(position),
         100, caseSens = false, reload = false)
 
-      logger.debug(new String(doc.contents))
       future.onComplete { f => logger.debug(s"Completions future completed: succes? ${f.isSuccess}") }
 
       future.map {
@@ -129,6 +133,37 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     }
 
     res.map(f => CompletionList(false, Await.result(f, 5 seconds))) getOrElse CompletionList(false, Nil)
+  }
+
+  override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): Seq[Location] = {
+    import scala.concurrent.ExecutionContext.Implicits._
+    logger.debug("Got goto definition request!")
+
+    val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
+      val future = ensimeProject ? SymbolAtPointReq(
+        Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
+        doc.positionToOffset(position))
+
+      future.onComplete { f => logger.debug(s"Goto Definition future completed: succes? ${f.isSuccess}") }
+
+      future.map {
+        case SymbolInfo(name, localName, declPos, typeInfo, isCallable) =>
+          declPos.toSeq.flatMap {
+            case OffsetSourcePosition(file, offset) =>
+              val uri = file.toURI.toString
+              val doc = TextDocument(uri, file.readString.toCharArray())
+              val start = doc.offsetToPosition(offset)
+              val end = start.copy(character = start.character + localName.length())
+
+              logger.info(s"Found definition at $uri, line: ${start.line}")
+              Seq(Location(uri, Range(start, end)))
+            case _ =>
+              Seq()
+          }
+      }
+    }
+
+    res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location]
   }
 
   private def toSourceFileInfo(uri: String, contents: Option[String] = None): SourceFileInfo = {
