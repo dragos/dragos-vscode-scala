@@ -2,7 +2,7 @@
     "name": "ensime-scala",
     "displayName": "Dragos' Scala Support",
     "description": "Dragos' Scala Language Support",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "dragos",
     "engines": {
         "vscode": "^0.10.10"

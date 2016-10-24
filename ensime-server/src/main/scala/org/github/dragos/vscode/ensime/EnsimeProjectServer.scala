@@ -1,4 +1,4 @@
-package org.github.dragos.vscode
+package org.github.dragos.vscode.ensime
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
@@ -16,6 +16,8 @@ import langserver.core.Connection
 import langserver.types._
 import java.net.URI
 import langserver.messages.MessageType
+import org.github.dragos.vscode.EnsimeLanguageServer
+import akka.actor.TypedActor.PostStop
 
 class EnsimeProjectServer(langServer: EnsimeLanguageServer, implicit val config: EnsimeConfig) extends Actor with LazyLogging {
   implicit val timeout: Timeout = Timeout(10 seconds)
@@ -25,6 +27,11 @@ class EnsimeProjectServer(langServer: EnsimeLanguageServer, implicit val config:
 
   override def preStart() {
     broadcaster ! Broadcaster.Register
+  }
+
+  override def postStop() {
+    super.postStop()
+    logger.info("Shutting down.")
   }
 
   private val compilerDiagnostics: ListBuffer[Note] = ListBuffer.empty

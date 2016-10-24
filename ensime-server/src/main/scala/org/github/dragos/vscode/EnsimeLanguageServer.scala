@@ -28,11 +28,13 @@ import langserver.messages._
 import langserver.types._
 import scalariform.formatter.preferences.FormattingPreferences
 import langserver.core.TextDocument
+import org.github.dragos.vscode.ensime.EnsimeActor
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
   private val system = ActorSystem("ENSIME")
 
-  private var ensimeProject: ActorRef = _
+  // Ensime root actor
+  private var ensimeActor: ActorRef = _
   implicit val timeout = Timeout(5 seconds)
 
   override def start() {
@@ -46,7 +48,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     logger.info(s"Initialized with $pid, $rootPath, $capabilities")
 
     val rootFile = new File(rootPath)
-    val cacheDir = new File(rootFile, ".ensime-vscode-cache")
+    val cacheDir = new File(rootFile, ".ensime_cache")
     cacheDir.mkdir()
     val noConfig = EnsimeConfig(
       rootFile,
@@ -72,10 +74,10 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
     logger.info(s"Using configuration: $config")
 
-    ensimeProject = system.actorOf(Props(classOf[EnsimeProjectServer], this, config))
+    ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config))
 
     // we don't give a damn about them, but Ensime expects it
-    ensimeProject ! ConnectionInfoReq
+    ensimeActor ! ConnectionInfoReq
 
     ServerCapabilities(
       completionProvider = Some(CompletionOptions(false, Seq("."))),
@@ -84,7 +86,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def onOpenTextDocument(td: TextDocumentItem) = {
     val f = new File(new URI(td.uri))
-    ensimeProject ! TypecheckFileReq(SourceFileInfo(f, Some(td.text)))
+    ensimeActor ! TypecheckFileReq(SourceFileInfo(f, Some(td.text)))
   }
 
   override def onChangeTextDocument(td: VersionedTextDocumentIdentifier, changes: Seq[TextDocumentContentChangeEvent]) = {
@@ -94,7 +96,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     assert(change.range.isEmpty)
     assert(change.rangeLength.isEmpty)
 
-    ensimeProject ! TypecheckFileReq(toSourceFileInfo(td.uri, Some(change.text)))
+    ensimeActor ! TypecheckFileReq(toSourceFileInfo(td.uri, Some(change.text)))
   }
 
   override def onSaveTextDocument(td: TextDocumentIdentifier) = {
@@ -118,7 +120,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def shutdown() {
     logger.info("Shutdown request")
-//    ensimeProject ! ShutdownRequest("Requested by client")
+//    ensimeActor ! ShutdownRequest("Requested by client")
     system.shutdown()
     logger.info("Shutting down actor system.")
     system.awaitTermination()
@@ -129,7 +131,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     import scala.concurrent.ExecutionContext.Implicits._
 
     val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
-      val future = ensimeProject ? CompletionsReq(
+      val future = ensimeActor ? CompletionsReq(
         toSourceFileInfo(textDocument.uri, Some(new String(doc.contents))),
         doc.positionToOffset(position),
         100, caseSens = false, reload = false)
@@ -148,10 +150,10 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): Seq[Location] = {
     import scala.concurrent.ExecutionContext.Implicits._
-    logger.debug("Got goto definition request!")
+    logger.info(s"Got goto definition request at (${position.line}, ${position.character}).")
 
     val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
-      val future = ensimeProject ? SymbolAtPointReq(
+      val future = ensimeActor ? SymbolAtPointReq(
         Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
         doc.positionToOffset(position))
 

@@ -11,7 +11,7 @@ appender("FILE", FileAppender) {
   }
 }
 
-root(DEBUG, ["FILE"])
+root(INFO, ["FILE"])
 logger("slick", ERROR, ["FILE"])
 logger("langserver.core", ERROR, ["FILE"])
 logger("scala.tools.nsc", ERROR, ["FILE"])
