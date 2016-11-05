@@ -2,7 +2,10 @@
     "name": "ensime-scala",
     "displayName": "Dragos' Scala Support",
     "description": "Dragos' Scala Language Support",
-    "version": "0.0.3",
+    "version": "0.0.4",
+    "repository": {
+        "url": "https://github.com/dragos/dragos-vscode-scala"
+    },
     "publisher": "dragos",
     "engines": {
         "vscode": "^1.4.0"
