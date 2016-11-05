@@ -74,7 +74,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
     logger.info(s"Using configuration: $config")
 
-    ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config))
+    ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config), "server")
 
     // we don't give a damn about them, but Ensime expects it
     ensimeActor ! ConnectionInfoReq
