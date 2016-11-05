@@ -15,17 +15,22 @@ The language server may be backed up by [ensime](http://ensime.github.io/) or di
 
 # How to try it out
 
+Download an existing [release](https://github.com/dragos/dragos-vscode-scala/releases) and install it in Code by choosing `Install from VSIX` in the Extensions view.
+
+## Building
+
 tl;dr
 
 ```bash
 $ sbt publishExtension
 $ cd scala
+$ npm install # only the first time, to download dependencies
+$ npm install -g tsc # if you don't have Typescript installed globally
 $ vsce package
 ```
 
-You shuld see a file `ensime-scala-0.0.3.vsix` (or whatever version you are building). Now install it in Code by choosing `Install from VSIX` in the Extensions view.
+You shuld see a file `ensime-scala-0.0.4.vsix` (or whatever version you are building). Now install it in Code by choosing `Install from VSIX` in the Extensions view.
 
-## Building
 
 The root Sbt project controls all the Scala parts of the build. The client is written in Typescript (it's really minimal) and lives under scala/. This one is built using Code's tools.
 
