@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dragos/dragos-vscode-scala.svg?branch=master)](https://travis-ci.org/dragos/dragos-vscode-scala)
+
 # Scala language server for VS Code
 
 ![demo](code.gif "Demo")
