@@ -13,7 +13,7 @@ lazy val languageserver = project.
   settings(commonSettings:_*).
   settings(
     libraryDependencies ++= Seq(
-      "com.dhpcs" %% "play-json-rpc" % "1.2.1",
+      "com.dhpcs" %% "play-json-rpc" % "1.3.0",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
       "org.slf4j" % "slf4j-api" % "1.7.21",
       "ch.qos.logback" %  "logback-classic" % "1.1.7",
