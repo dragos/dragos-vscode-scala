@@ -17,6 +17,14 @@ The language server may be backed up by [ensime](http://ensime.github.io/) or di
 
 Download an existing [release](https://github.com/dragos/dragos-vscode-scala/releases) and install it in Code by choosing `Install from VSIX` in the Extensions view.
 
+Make sure you have an existing `.ensime` file before starting code in that directory (`sbt ensimeConfig` should create it if you have [sbt-ensime](https://github.com/ensime/ensime-sbt) already setup)
+
+### What works
+
+- errors as you type
+- code completion
+- goto definition (F12 and Alt-F12)
+
 ## Building
 
 tl;dr
