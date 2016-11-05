@@ -5,7 +5,7 @@
     "version": "0.0.3",
     "publisher": "dragos",
     "engines": {
-        "vscode": "^0.10.10"
+        "vscode": "^1.4.0"
     },
     "categories": [
         "Languages"
