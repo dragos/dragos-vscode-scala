@@ -1,0 +1,8 @@
+language: Scala
+script: sbt test
+
+cache:
+  directories:
+  - $HOME/.ivy2
+  - $HOME/.m2
+
