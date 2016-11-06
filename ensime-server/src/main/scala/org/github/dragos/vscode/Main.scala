@@ -7,7 +7,7 @@ import java.io.FileOutputStream
 
 object Main extends LazyLogging {
   def main(args: Array[String]): Unit = {
-    val cwd = System.getenv("PWD")
+    val cwd = System.getProperty("vscode.workspace")
     logger.info(s"Starting server in $cwd")
     logger.info(s"Classpath: ${Properties.javaClassPath}")
 
