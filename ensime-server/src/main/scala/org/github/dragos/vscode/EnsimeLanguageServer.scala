@@ -81,7 +81,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
     ServerCapabilities(
       completionProvider = Some(CompletionOptions(false, Seq("."))),
-      definitionProvider = true)
+      definitionProvider = true, 
+      hoverProvider = true
+    )
   }
 
   override def onOpenTextDocument(td: TextDocumentItem) = {
@@ -178,6 +180,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
     res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location]
   }
+
+  override def hoverRequest(textDocument: TextDocumentIdentifier, position: Position) =
+    gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position)
 
   private def toSourceFileInfo(uri: String, contents: Option[String] = None): SourceFileInfo = {
     val f = new File(new URI(uri))
