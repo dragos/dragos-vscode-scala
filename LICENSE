@@ -1,3 +1,6 @@
+The module ensime-server is licensed under GPLv3 (see ensime-server/LICENSE). Everything else is licensed under Apache 2.0.
+
+
 Copyright 2016 Iulian Dragos
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,4 +14,3 @@ Copyright 2016 Iulian Dragos
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
