@@ -21,7 +21,7 @@ export function activate(context: ExtensionContext) {
 
   console.log("Workspace location is: " + workspace.rootPath)
 
-  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-cp", toolsJar + ":" + assemblyPath, "org.github.dragos.vscode.Main"];
+  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-cp", toolsJar + path.delimiter + assemblyPath, "org.github.dragos.vscode.Main"];
   // The debug options for the server
   let debugOptions = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y"];
 
