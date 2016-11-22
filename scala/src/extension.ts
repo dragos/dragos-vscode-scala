@@ -7,7 +7,7 @@
 import * as path from 'path';
 import * as VSCode from 'vscode';
 
-import { workspace, Disposable, ExtensionContext } from 'vscode';
+import { workspace, Disposable, ExtensionContext, commands, window } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 
 export function activate(context: ExtensionContext) {
@@ -78,5 +78,41 @@ export function activate(context: ExtensionContext) {
       }
     ]
   })
+
+  // sbt command support
+  const runCommandInIntegratedTerminal = (args: string[], cwd: string) => {
+    const terminal = window.createTerminal('sbt');
+    terminal.show();
+    terminal.sendText(args.join(' '));
+  }
+
+  const runSbtCommand = (args: string[], cwd?: string) => {
+    workspace.saveAll().then(() => {
+      if (!cwd) {
+        cwd = workspace.rootPath;
+      }
+      args.splice(0, 0, 'sbt');
+      if (typeof window.createTerminal === 'function') {
+        runCommandInIntegratedTerminal(args, cwd);
+      }
+    });
+  }
+
+  const runSbtCompile = () => {
+    runSbtCommand(['compile']);
+  }
+
+  const runSbtTest = () => {
+    runSbtCommand(['test']);
+  }
+
+  const registerCommands = (context: ExtensionContext) => {
+    context.subscriptions.push(
+      commands.registerCommand('sbt.compile', runSbtCompile),
+      commands.registerCommand('sbt.test', runSbtTest)
+    );
+  }
+
+  registerCommands(context);
 
 }
