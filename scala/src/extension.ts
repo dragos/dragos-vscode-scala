@@ -7,7 +7,7 @@
 import * as path from 'path';
 import * as VSCode from 'vscode';
 
-import { workspace, Disposable, ExtensionContext, commands, window } from 'vscode';
+import { workspace, Disposable, ExtensionContext, commands, window, Terminal } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 
 export function activate(context: ExtensionContext) {
@@ -80,8 +80,11 @@ export function activate(context: ExtensionContext) {
   })
 
   // sbt command support
+  let terminal: Terminal = null;
   const runCommandInIntegratedTerminal = (args: string[], cwd: string) => {
-    const terminal = window.createTerminal('sbt');
+    if (terminal === null) {
+      terminal = window.createTerminal('sbt');
+    }
     terminal.show();
     terminal.sendText(args.join(' '));
   }
