@@ -15,8 +15,13 @@
     ],
     "activationEvents": [
         "onLanguage:scala",
+        "onCommand:sbt.update",
         "onCommand:sbt.compile",
-        "onCommand:sbt.test"
+        "onCommand:sbt.run",
+        "onCommand:sbt.test",
+        "onCommand:sbt.clean",
+        "onCommand:sbt.reload",
+        "onCommand:sbt.package"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -33,13 +38,38 @@
         }],
         "commands": [
             {
+                "command": "sbt.update",
+                "title": "update",
+                "category": "sbt"
+            },
+            {
                 "command": "sbt.compile",
                 "title": "compile",
                 "category": "sbt"
             },
             {
+                "command": "sbt.run",
+                "title": "run",
+                "category": "sbt"
+            },
+            {
                 "command": "sbt.test",
                 "title": "test",
+                "category": "sbt"
+            },
+            {
+                "command": "sbt.clean",
+                "title": "clean",
+                "category": "sbt"
+            },
+            {
+                "command": "sbt.reload",
+                "title": "reload",
+                "category": "sbt"
+            },
+            {
+                "command": "sbt.package",
+                "title": "package",
                 "category": "sbt"
             }
         ]
