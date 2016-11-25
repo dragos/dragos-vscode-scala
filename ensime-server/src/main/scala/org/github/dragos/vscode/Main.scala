@@ -18,6 +18,7 @@ object Main extends LazyLogging {
     val origOut = System.out
     try {
       System.setOut(new PrintStream(new FileOutputStream(s"$cwd/pc.stdout.log")))
+      System.setErr(new PrintStream(new FileOutputStream(s"$cwd/pc.stdout.log")))
       println("This file contains stdout from the presentation compiler.")
       server.start()
     } finally {
