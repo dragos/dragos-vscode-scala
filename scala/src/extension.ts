@@ -7,7 +7,7 @@
 import * as path from 'path';
 import * as VSCode from 'vscode';
 
-import { workspace, Disposable, ExtensionContext } from 'vscode';
+import { workspace, Disposable, ExtensionContext, commands, window, Terminal } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 
 export function activate(context: ExtensionContext) {
@@ -21,7 +21,7 @@ export function activate(context: ExtensionContext) {
 
   console.log("Workspace location is: " + workspace.rootPath)
 
-  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-cp", toolsJar + ":" + assemblyPath, "org.github.dragos.vscode.Main"];
+  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-cp", toolsJar + path.delimiter + assemblyPath, "org.github.dragos.vscode.Main"];
   // The debug options for the server
   let debugOptions = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y"];
 
@@ -78,5 +78,69 @@ export function activate(context: ExtensionContext) {
       }
     ]
   })
+
+  // sbt command support
+  let terminal: Terminal = null;
+  const runCommandInIntegratedTerminal = (args: string[], cwd: string) => {
+    if (terminal === null) {
+      terminal = window.createTerminal('sbt');
+    }
+    terminal.show();
+    terminal.sendText(args.join(' '));
+  }
+
+  const runSbtCommand = (args: string[], cwd?: string) => {
+    workspace.saveAll().then(() => {
+      if (!cwd) {
+        cwd = workspace.rootPath;
+      }
+      args.splice(0, 0, 'sbt');
+      if (typeof window.createTerminal === 'function') {
+        runCommandInIntegratedTerminal(args, cwd);
+      }
+    });
+  }
+
+  const runSbtUpdate = () => {
+    runSbtCommand(['update']);
+  }
+
+  const runSbtCompile = () => {
+    runSbtCommand(['compile']);
+  }
+
+  const runSbtRun = () => {
+    runSbtCommand(['run']);
+  }
+
+  const runSbtTest = () => {
+    runSbtCommand(['test']);
+  }
+
+  const runSbtClean = () => {
+    runSbtCommand(['clean']);
+  }
+
+  const runSbtReload = () => {
+    runSbtCommand(['reload']);
+  }
+
+  const runSbtPackage = () => {
+    runSbtCommand(['package']);
+  }
+
+  const registerCommands = (context: ExtensionContext) => {
+    context.subscriptions.push(
+      commands.registerCommand('sbt.update', runSbtUpdate),
+      commands.registerCommand('sbt.compile', runSbtCompile),
+      commands.registerCommand('sbt.run', runSbtRun),
+      commands.registerCommand('sbt.test', runSbtTest),
+      commands.registerCommand('sbt.clean', runSbtClean),
+      commands.registerCommand('sbt.reload', runSbtReload),
+      commands.registerCommand('sbt.package', runSbtPackage)
+    );
+  }
+
+  registerCommands(context);
 
 }
