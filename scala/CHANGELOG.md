@@ -2,6 +2,8 @@
 
 ## 0.0.5 (MMM d, yyyy)
 
+* add a couple of simple Scala snippets
+* switch to Ensime 2.0
 * enhancement - Auto edit for scaladoc.
 * enhancement - Add sbt command support.
 * bug fix - Classpath should use 'path.delimiter' (for Windows). See [#12](https://github.com/dragos/dragos-vscode-scala/issues/12).
