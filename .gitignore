@@ -7,6 +7,6 @@ node_modules/
 out/
 .DS_Store
 .ensime_cache
-*.jar
 *.vsix
 *.log
+scala/server/ensimeServer-assembly*
