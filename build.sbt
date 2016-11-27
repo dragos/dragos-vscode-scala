@@ -6,7 +6,10 @@ scalaVersion in ThisBuild := "2.11.8"
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
   version := "0.1.0",
-  resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven"
+  resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
+  libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  )
 )
 
 lazy val languageserver = project.
@@ -17,7 +20,6 @@ lazy val languageserver = project.
       "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
       "org.slf4j" % "slf4j-api" % "1.7.21",
       "ch.qos.logback" %  "logback-classic" % "1.1.7",
-      "org.scalatest" %% "scalatest" % "2.2.6" % "test",
       "org.codehaus.groovy" % "groovy" % "2.4.0"
     )
   )
@@ -27,8 +29,9 @@ lazy val ensimeServer = project.
   dependsOn(languageserver).
   settings(commonSettings:_*).
   settings(
+    resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "org.ensime" %% "core" % "1.0.0"
+      "org.ensime" %% "core" % "2.0.0-SNAPSHOT"
     ),
     assemblyMergeStrategy in assembly := {
       case PathList("org", "apache", "commons", "vfs2", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly

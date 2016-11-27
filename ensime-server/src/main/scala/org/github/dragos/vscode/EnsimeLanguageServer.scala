@@ -26,12 +26,18 @@ import akka.util.Timeout
 import langserver.core.LanguageServer
 import langserver.messages._
 import langserver.types._
-import scalariform.formatter.preferences.FormattingPreferences
+//import scalariform.formatter.preferences.FormattingPreferences
 import langserver.core.TextDocument
 import org.github.dragos.vscode.ensime.EnsimeActor
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+import java.nio.charset.Charset
+import langserver.core.MessageReader
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
   private val system = ActorSystem("ENSIME")
+  private var fileStore: TempFileStore = _
 
   // Ensime root actor
   private var ensimeActor: ActorRef = _
@@ -50,45 +56,53 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     val rootFile = new File(rootPath)
     val cacheDir = new File(rootFile, ".ensime_cache")
     cacheDir.mkdir()
-    val noConfig = EnsimeConfig(
-      rootFile,
-      cacheDir,
-      javaHome = new File(scala.util.Properties.javaHome),
-      name = "scala",
-      scalaVersion = "2.11.8",
-      compilerArgs = Nil,
-      referenceSourceRoots = Nil,
-      subprojects = Nil,
-      formattingPrefs = FormattingPreferences(),
-      sourceMode = false,
-      javaLibs = Nil)
+//    val noConfig = EnsimeConfig(
+//      rootFile,
+//      cacheDir,
+//      javaHome = new File(scala.util.Properties.javaHome),
+//      name = "scala",
+//      scalaVersion = "2.11.8",
+//      compilerArgs = Nil,
+//      referenceSourceRoots = Nil,
+//      subprojects = Nil,
+//      formattingPrefs = FormattingPreferences(),
+//      sourceMode = false,
+//      javaLibs = Nil)
 
-    val ensimeFile = new File(s"$rootPath/.ensime")
-    val config: EnsimeConfig = try {
-      EnsimeConfigProtocol.parse(Files.toString(ensimeFile, Charsets.UTF_8))
-    } catch {
-      case e: Throwable =>
-        connection.showMessage(MessageType.Error, s"There was a problem parsing $ensimeFile ${e.getMessage}")
-        noConfig
-    }
-    //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
-    logger.info(s"Using configuration: $config")
-
-    ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config), "server")
-
-    // we don't give a damn about them, but Ensime expects it
-    ensimeActor ! ConnectionInfoReq
+    initializeEnsime(rootPath)
 
     ServerCapabilities(
       completionProvider = Some(CompletionOptions(false, Seq("."))),
-      definitionProvider = true, 
+      definitionProvider = true,
       hoverProvider = true
     )
   }
 
+  private def initializeEnsime(rootPath: String): Try[EnsimeConfig] = {
+    val ensimeFile = new File(s"$rootPath/.ensime")
+
+    val configT = Try {
+      EnsimeConfigProtocol.parse(Files.toString(ensimeFile, Charsets.UTF_8))
+    }
+
+    configT match {
+      case Failure(e) =>
+        connection.showMessage(MessageType.Error, s"There was a problem parsing $ensimeFile ${e.getMessage}")
+      case Success(config) =>
+        //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
+        logger.info(s"Using configuration: $config")
+        fileStore = new TempFileStore(config.cacheDir.toString)
+        ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config), "server")
+
+        // we don't give a damn about them, but Ensime expects it
+        ensimeActor ! ConnectionInfoReq
+    }
+    configT
+  }
+
   override def onOpenTextDocument(td: TextDocumentItem) = {
     val f = new File(new URI(td.uri))
-    ensimeActor ! TypecheckFileReq(SourceFileInfo(f, Some(td.text)))
+    ensimeActor ! TypecheckFileReq(SourceFileInfo(RawFile(f.toPath()), Some(td.text)))
   }
 
   override def onChangeTextDocument(td: VersionedTextDocumentIdentifier, changes: Seq[TextDocumentContentChangeEvent]) = {
@@ -162,16 +176,24 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
       future.onComplete { f => logger.debug(s"Goto Definition future completed: succes? ${f.isSuccess}") }
 
       future.map {
-        case SymbolInfo(name, localName, declPos, typeInfo, isCallable) =>
+        case SymbolInfo(name, localName, declPos, typeInfo) =>
           declPos.toSeq.flatMap {
-            case OffsetSourcePosition(file, offset) =>
-              val uri = file.toURI.toString
-              val doc = TextDocument(uri, file.readString.toCharArray())
-              val start = doc.offsetToPosition(offset)
-              val end = start.copy(character = start.character + localName.length())
+            case OffsetSourcePosition(ensimeFile, offset) =>
+              fileStore.getFile(ensimeFile).map { path =>
+                val file = path.toFile
+                val uri = file.toURI.toString
+                val doc = TextDocument(uri, file.readString()(MessageReader.Utf8Charset).toCharArray())
+                val start = doc.offsetToPosition(offset)
+                val end = start.copy(character = start.character + localName.length())
 
-              logger.info(s"Found definition at $uri, line: ${start.line}")
-              Seq(Location(uri, Range(start, end)))
+                logger.info(s"Found definition at $uri, line: ${start.line}")
+                Seq(Location(uri, Range(start, end)))
+              }.recover {
+                case e =>
+                  logger.error(s"Couldn't retrieve hyperlink target file $e")
+                  Seq()
+              }.get
+
             case _ =>
               Seq()
           }
@@ -186,7 +208,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   private def toSourceFileInfo(uri: String, contents: Option[String] = None): SourceFileInfo = {
     val f = new File(new URI(uri))
-    SourceFileInfo(f, contents)
+    SourceFileInfo(RawFile(f.toPath), contents)
   }
 
   private def toCompletion(completionInfo: CompletionInfo) = {
