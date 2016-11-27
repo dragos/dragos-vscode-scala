@@ -2,6 +2,8 @@
 
 ## 0.0.5 (MMM d, yyyy)
 
+* Fix #1: Don't report errors in files from .ensime_cache
+* unload files from the PC when the editor is closed
 * add a couple of simple Scala snippets
 * switch to Ensime 2.0
 * enhancement - Auto edit for scaladoc.

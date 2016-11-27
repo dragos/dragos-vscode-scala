@@ -102,7 +102,11 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def onOpenTextDocument(td: TextDocumentItem) = {
     val f = new File(new URI(td.uri))
-    ensimeActor ! TypecheckFileReq(SourceFileInfo(RawFile(f.toPath()), Some(td.text)))
+    if (f.getAbsolutePath.startsWith(fileStore.path)) {
+      logger.debug(s"Not adding temporary file $f to Ensime")
+    } else {
+      ensimeActor ! TypecheckFileReq(SourceFileInfo(RawFile(f.toPath()), Some(td.text)))
+    }
   }
 
   override def onChangeTextDocument(td: VersionedTextDocumentIdentifier, changes: Seq[TextDocumentContentChangeEvent]) = {
@@ -120,7 +124,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   }
 
   override def onCloseTextDocument(td: TextDocumentIdentifier) = {
-    // TODO: unload files from Ensime
+    logger.debug("Removing ${td.uri} from Ensime.")
+    val doc = documentManager.documentForUri(td.uri)
+    doc.map(d => ensimeActor ! RemoveFileReq(d.toFile))
   }
 
   def publishDiagnostics(diagnostics: List[Note]) = {

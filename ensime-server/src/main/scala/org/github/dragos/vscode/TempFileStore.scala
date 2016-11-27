@@ -13,7 +13,7 @@ import com.typesafe.scalalogging.LazyLogging
 /**
  * A place to unzip files from archives
  */
-class TempFileStore(path: String) extends LazyLogging {
+class TempFileStore(val path: String) extends LazyLogging {
   val rootPath = FileSystems.getDefault.getPath(path)
 
   if (!Files.exists(rootPath)) {
