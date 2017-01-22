@@ -12,7 +12,7 @@ import scala.io.Source
 import org.ensime.api._
 import org.ensime.api.TypecheckFileReq
 import org.ensime.config.EnsimeConfigProtocol
-import org.ensime.core.ShutdownRequest
+import org.ensime.core._
 import org.ensime.util.file._
 
 import com.google.common.base.Charsets
@@ -209,8 +209,26 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location]
   }
 
-  override def hoverRequest(textDocument: TextDocumentIdentifier, position: Position) =
-    gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position)
+  override def hoverRequest(textDocument: TextDocumentIdentifier, position: Position): Hover = {
+    import scala.concurrent.ExecutionContext.Implicits._
+    logger.info(s"Got hover request at (${position.line}, ${position.character}).")
+
+    val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
+      val future = ensimeActor ? DocUriAtPointReq(
+        Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
+        OffsetRange(doc.positionToOffset(position)))
+
+      future.onComplete { f => logger.debug(s"DocUriAtPointReq future completed: succes? ${f.isSuccess}") }
+
+      future.map {
+        case Some(sigPair @ DocSigPair(DocSig(_, scalaSig), DocSig(_, javaSig))) =>
+          val sig = scalaSig.orElse(javaSig).getOrElse("")
+          logger.info(s"Retrieved signature $sig from @sigPair")
+          Hover(Seq(RawMarkedString("scala", sig)), Some(Range(position, position)))
+      }
+    }
+    res.map { f =>  Await.result(f, 5 seconds) } getOrElse Hover(Nil, None)
+  }
 
   private def toSourceFileInfo(uri: String, contents: Option[String] = None): SourceFileInfo = {
     val f = new File(new URI(uri))

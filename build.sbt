@@ -25,7 +25,7 @@ lazy val languageserver = project.
   )
 
 lazy val ensimeServer = project.
-  in(file("ensime-server")).
+  in(file("ensime-lsp")).
   dependsOn(languageserver).
   settings(commonSettings:_*).
   settings(

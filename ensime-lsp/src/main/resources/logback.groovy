@@ -13,6 +13,6 @@ appender("FILE", FileAppender) {
 
 root(INFO, ["FILE"])
 logger("slick", ERROR, ["FILE"])
-logger("langserver.core", ERROR, ["FILE"])
+logger("langserver.core", INFO, ["FILE"])
 logger("scala.tools.nsc", ERROR, ["FILE"])
 logger("com.zaxxer.hikari", ERROR, ["FILE"])
