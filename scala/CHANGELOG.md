@@ -2,6 +2,8 @@
 
 ## 0.0.5 (MMM d, yyyy)
 
+* Implement hover functionality
+* Reuse Sbt instance between commands
 * Fix #1: Don't report errors in files from .ensime_cache
 * unload files from the PC when the editor is closed
 * add a couple of simple Scala snippets

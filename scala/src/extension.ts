@@ -80,6 +80,8 @@ export function activate(context: ExtensionContext) {
   const runCommandInIntegratedTerminal = (args: string[], cwd: string) => {
     if (terminal === null) {
       terminal = window.createTerminal('sbt');
+      // start sbt
+      terminal.sendText("sbt", true)
     }
     terminal.show();
     terminal.sendText(args.join(' '));
@@ -90,7 +92,6 @@ export function activate(context: ExtensionContext) {
       if (!cwd) {
         cwd = workspace.rootPath;
       }
-      args.splice(0, 0, 'sbt');
       if (typeof window.createTerminal === 'function') {
         runCommandInIntegratedTerminal(args, cwd);
       }
