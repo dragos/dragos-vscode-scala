@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.5 (MMM d, yyyy)
+## 0.0.5 (Jan 28, 2017)
 
 * Implement hover functionality
 * Reuse Sbt instance between commands
