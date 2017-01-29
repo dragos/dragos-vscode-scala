@@ -2,6 +2,7 @@
 
 ## 0.0.6 (unreleased)
 
+* Added document symbols (file structure)
 * Automatically detect changes to .ensime and restart the server
 
 ## 0.0.5 (Jan 28, 2017)

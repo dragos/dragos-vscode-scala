@@ -13,6 +13,7 @@ appender("FILE", FileAppender) {
 
 root(INFO, ["FILE"])
 logger("slick", ERROR, ["FILE"])
+logger("org.github.dragos.vscode", DEBUG, ["FILE"])
 logger("langserver.core", INFO, ["FILE"])
 logger("scala.tools.nsc", ERROR, ["FILE"])
 logger("com.zaxxer.hikari", ERROR, ["FILE"])

@@ -1,5 +1,7 @@
 package org.github.dragos.vscode
 
+import language.postfixOps
+
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -74,7 +76,8 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     ServerCapabilities(
       completionProvider = Some(CompletionOptions(false, Seq("."))),
       definitionProvider = true,
-      hoverProvider = true
+      hoverProvider = true,
+      documentSymbolProvider = true
     )
   }
 
@@ -118,7 +121,11 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
   override def onOpenTextDocument(td: TextDocumentItem): Unit = {
     if (ensimeActor eq null) return
-
+    val uri = new URI(td.uri)
+    if (uri.getScheme != "file") {
+      logger.info(s"Non-file URI in openTextDocument: ${td.uri}")
+      return
+    }
     val f = new File(new URI(td.uri))
     if (f.getAbsolutePath.startsWith(fileStore.path)) {
       logger.debug(s"Not adding temporary file $f to Ensime")
@@ -261,6 +268,63 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     // }
     res.map { f =>  Await.result(f, 5 seconds) } getOrElse Hover(Nil, None)
   }
+
+  override def documentSymbols(tdi: TextDocumentIdentifier): Seq[SymbolInformation] = {
+    import scala.concurrent.ExecutionContext.Implicits._
+    import scala.concurrent.Future
+
+    if (ensimeActor ne null) {
+      val res: Option[Future[List[SymbolInformation]]] = for (doc <- documentManager.documentForUri(tdi.uri)) yield {
+
+        def toSymbolInformation(structure: StructureViewMember, outer: Option[String]): Seq[SymbolInformation] = {
+          structure match {
+            case StructureViewMember(keyword, name, pos, members) =>
+              val kind = keywordToKind.getOrElse(keyword, SymbolKind.Field)
+              val rest = members.flatMap(m => toSymbolInformation(m, Some(name)))
+              val position = pos match {
+                case OffsetSourcePosition(_, offset) => doc.offsetToPosition(offset)
+                case LineSourcePosition(_, line) => Position(line, 0)
+                case _ =>
+                  logger.error(s"Unknown position for $name: $pos")
+                  Position(0, 0)
+              }
+
+              SymbolInformation(
+                name,
+                kind,
+                Location(tdi.uri, Range(position, position.copy(character = position.character + name.length))),
+                outer) +: rest
+
+            case _ =>
+              logger.error(s"Unknown structure element: $structure")
+              Seq.empty
+          }
+        }
+
+        logger.info(s"Document Symbols request for ${tdi.uri}")
+        val future = ensimeActor ? StructureViewReq(toSourceFileInfo(tdi.uri, Some(new String(doc.contents))))
+
+        future.onComplete { f => logger.debug(s"StructureView future completed: succes? ${f.isSuccess}") }
+        future.map {
+          case StructureView(members) =>
+            logger.debug(s"got back: $members")
+            members.flatMap(m => toSymbolInformation(m, None))
+        }
+      }
+      res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty
+    } else Seq.empty
+  }
+
+  private val keywordToKind = Map(
+    "class" -> SymbolKind.Class,
+    "trait" -> SymbolKind.Interface,
+    "type" -> SymbolKind.Interface,
+    "package" -> SymbolKind.Package,
+    "def" -> SymbolKind.Method,
+    "val" -> SymbolKind.Constant,
+    "var" -> SymbolKind.Field
+  )
+
 
   private def toSourceFileInfo(uri: String, contents: Option[String] = None): SourceFileInfo = {
     val f = new File(new URI(uri))
