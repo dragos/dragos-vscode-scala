@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.6 (unreleased)
+
+* Automatically detect changes to .ensime and restart the server
+
 ## 0.0.5 (Jan 28, 2017)
 
 * Implement hover functionality

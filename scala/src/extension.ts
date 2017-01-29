@@ -32,12 +32,12 @@ export function activate(context: ExtensionContext) {
   let clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
     documentSelector: ['scala'],
-    // synchronize: {
-    // 	// Synchronize the setting section 'languageServerExample' to the server
-    // 	configurationSection: 'languageServerExample',
-    // 	// Notify the server about file changes to '.clientrc files contain in the workspace
-    // 	fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
-    // }
+    synchronize: {
+    	// // Synchronize the setting section 'languageServerExample' to the server
+    	// configurationSection: 'languageServerExample',
+    	// Notify the server about file changes to '.clientrc files contain in the workspace
+    	fileEvents: workspace.createFileSystemWatcher(workspace.rootPath + '/.ensime')
+    }
   }
 
   // Create the language client and start the client.

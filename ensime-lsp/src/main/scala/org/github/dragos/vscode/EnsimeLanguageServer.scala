@@ -88,9 +88,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     configT match {
       case Failure(e) =>
         if (ensimeFile.exists)
-          connection.showMessage(MessageType.Error, s"No .ensime file in directory. Run `sbt ensimeConfig` to create one.")
-        else
           connection.showMessage(MessageType.Error, s"Error parsing .ensime: ${e.getMessage}")
+        else
+          connection.showMessage(MessageType.Error, s"No .ensime file in directory. Run `sbt ensimeConfig` to create one.")
       case Success(config) =>
         //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
         logger.info(s"Using configuration: $config")
@@ -103,7 +103,22 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     configT
   }
 
-  override def onOpenTextDocument(td: TextDocumentItem) = {
+  override def onChangeWatchedFiles(changes: Seq[FileEvent]): Unit = changes match {
+    case FileEvent(uri, FileChangeType.Created | FileChangeType.Changed) +: _ =>
+      val rootPath = Try(new File(new URI(uri).toURL.getPath).getParent)
+      rootPath.map { path =>
+        connection.showMessage(MessageType.Info, ".ensime file change detected. Reloading")
+        if (ensimeActor ne null)
+          ensimeActor ! ShutdownRequest(".ensime file changed")
+        initializeEnsime(path)
+      }
+
+    case _ => ()
+  }
+
+  override def onOpenTextDocument(td: TextDocumentItem): Unit = {
+    if (ensimeActor eq null) return
+
     val f = new File(new URI(td.uri))
     if (f.getAbsolutePath.startsWith(fileStore.path)) {
       logger.debug(s"Not adding temporary file $f to Ensime")
