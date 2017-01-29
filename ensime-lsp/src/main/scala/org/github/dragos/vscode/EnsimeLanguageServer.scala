@@ -366,15 +366,4 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
     Diagnostic(range, Some(severity), code = None, source = Some("Scala"), message = note.msg)
   }
-
-  private def positionToOffset(contents: String, pos: Position): Int = {
-    val source = Source.fromString(contents).getLines()
-    var offset = 0
-    var line = pos.line
-    while (source.hasNext && line > 0) {
-      val str = source.next()
-      offset += str.length() + 1 // we assume Linux EOLs
-    }
-    offset + pos.character
-  }
 }
