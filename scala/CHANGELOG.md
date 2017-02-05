@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.6 (unreleased)
+## 0.1.0 (Feb 5, 2017)
 
 * Added document symbols (file structure)
 * Automatically detect changes to .ensime and restart the server
