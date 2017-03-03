@@ -24,7 +24,7 @@ lazy val languageserver = project.
     )
   )
 
-lazy val ensimeServer = project.
+lazy val `ensime-lsp` = project.
   in(file("ensime-lsp")).
   dependsOn(languageserver).
   settings(commonSettings).
@@ -44,7 +44,7 @@ lazy val ensimeServer = project.
 lazy val publishExtension = taskKey[Unit]("Copy ensimeServer assembly to extension")
 
 publishExtension := {
-  val assemblyFile = (assembly in ensimeServer).value
+  val assemblyFile = (assembly in `ensime-lsp`).value
   println(s"""Copying $assemblyFile to ${baseDirectory.value / "scala" / "server"}.""")
   IO.copyFile(assemblyFile, baseDirectory.value / "scala" / "server" / assemblyFile.getName)
 }
