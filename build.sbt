@@ -5,7 +5,7 @@ scalaVersion in ThisBuild := "2.11.8"
 
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
-  version := "0.1.0",
+  version := "0.1.1-SNAPSHOT",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
