@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val languageserver = project.
-  settings(commonSettings:_*).
+  settings(commonSettings).
   settings(
     libraryDependencies ++= Seq(
       "com.dhpcs" %% "play-json-rpc" % "1.3.0",
@@ -27,7 +27,7 @@ lazy val languageserver = project.
 lazy val ensimeServer = project.
   in(file("ensime-lsp")).
   dependsOn(languageserver).
-  settings(commonSettings:_*).
+  settings(commonSettings).
   settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
