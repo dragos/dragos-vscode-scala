@@ -10,3 +10,4 @@ out/
 *.vsix
 *.log
 scala/server/ensimeServer-assembly*
+coursier

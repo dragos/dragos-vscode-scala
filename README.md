@@ -30,7 +30,7 @@ Make sure you have an existing `.ensime` file before starting code in that direc
 tl;dr
 
 ```bash
-$ sbt publishExtension
+$ sbt publishLocal
 $ cd scala
 $ npm install # only the first time, to download dependencies
 $ npm install -g vsce typescript # if you don't have Typescript installed globally
@@ -46,10 +46,10 @@ The root Sbt project controls all the Scala parts of the build. The client is wr
 - ensime-lsp/ implements an Ensime based Scala language server
 - scala/ The typescript extension (eventually should migrate to Scala.js)
 
-`ensime-lsp` is what you will want to build most of the times. It's using `assembly` to build a fat jar, so the client can launch it as simply as possible.
+`ensime-lsp` is what you will want to build most of the times. It's launched with coursier by the client, for it to be as simply as possible.
 
-You should use `sbt publishExtension` which copies the fat jar into a directory under scala/server, so the client finds it easily.
+You should use `sbt publishLocal` which publishes the server under `~/.ivy2/local`, so the client finds it easily.
 
 ## Running
 
-You can open code inside the `scala/` directory and use `F5` to debug the extension. This picks up the changes in the server (make sure you copied the fat jar using `sbt publishExtension`!) and allows quick iteration.
+You can open code inside the `scala/` directory and use `F5` to debug the extension. This picks up the changes in the server (make sure you published it locally using `sbt publishLocal`!) and allows quick iteration.

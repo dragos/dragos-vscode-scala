@@ -12,12 +12,13 @@ export function activate(context: ExtensionContext) {
   console.info("Adding to classpath " + toolsJar);
 
   // The server is implemented in Scala
-  let assemblyPath = path.join(context.extensionPath, "./server/ensimeServer-assembly-0.1.0.jar")
-  console.info("Using " + assemblyPath);
+  let coursierPath = path.join(context.extensionPath, "./coursier")
+  console.info("Using coursier " + coursierPath);
 
   console.log("Workspace location is: " + workspace.rootPath)
 
-  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-cp", toolsJar + path.delimiter + assemblyPath, "org.github.dragos.vscode.Main"];
+  let coursierArgs = ["launch", "-r", "https://dl.bintray.com/dhpcs/maven", "-r", "sonatype:snapshots", "-J", toolsJar, "com.github.dragos:ensime-lsp_2.11:0.1.1-SNAPSHOT", "-M", "org.github.dragos.vscode.Main"];
+  let javaArgs = ["-Dvscode.workspace=" + workspace.rootPath, "-jar", coursierPath].concat(coursierArgs);
   // The debug options for the server
   let debugOptions = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y"];
 

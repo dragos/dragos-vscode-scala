@@ -5,7 +5,7 @@ scalaVersion in ThisBuild := "2.11.8"
 
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
-  version := "0.1.0",
+  version := "0.1.1-SNAPSHOT",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val languageserver = project.
-  settings(commonSettings:_*).
+  settings(commonSettings).
   settings(
     libraryDependencies ++= Seq(
       "com.dhpcs" %% "play-json-rpc" % "1.3.0",
@@ -24,27 +24,13 @@ lazy val languageserver = project.
     )
   )
 
-lazy val ensimeServer = project.
+lazy val `ensime-lsp` = project.
   in(file("ensime-lsp")).
   dependsOn(languageserver).
-  settings(commonSettings:_*).
+  settings(commonSettings).
   settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
       "org.ensime" %% "core" % "2.0.0-SNAPSHOT"
-    ),
-    assemblyMergeStrategy in assembly := {
-      case PathList("org", "apache", "commons", "vfs2", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
-      case PathList("scala", "reflect", "io", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
-      case PathList("logback.groovy", xs @ _*) => MergeStrategy.first // assumes our classpath is setup correctly
-      case other => MergeStrategy.defaultMergeStrategy(other)
-    }
+    )
   )
-
-lazy val publishExtension = taskKey[Unit]("Copy ensimeServer assembly to extension")
-
-publishExtension := {
-  val assemblyFile = (assembly in ensimeServer).value
-  println(s"""Copying $assemblyFile to ${baseDirectory.value / "scala" / "server"}.""")
-  IO.copyFile(assemblyFile, baseDirectory.value / "scala" / "server" / assemblyFile.getName)
-}
