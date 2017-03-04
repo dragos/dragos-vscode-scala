@@ -1,4 +1,4 @@
-# Dragos' Scala Language Server
+# An Ensime-based Scala Language Server
 
 This extension installs an Ensime-based Scala language server. At the moment, the following features are supported:
 

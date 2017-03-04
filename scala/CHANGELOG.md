@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1 (March 4, 2017)
+
+- switch to coursier for launching so download size is small enough to publish to Marketplace
+
 ## 0.1.0 (Feb 5, 2017)
 
 * Added document symbols (file structure)
