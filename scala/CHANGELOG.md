@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.2 (March 4, 2017)
+
+- Added disclaimer
+
 ## 0.1.1 (March 4, 2017)
 
 - switch to coursier for launching so download size is small enough to publish to Marketplace
