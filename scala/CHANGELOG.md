@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.x (MM DD, YYYY)
+
+- Added JAVA_HOME detection. See [#23](https://github.com/dragos/dragos-vscode-scala/issues/23), [#24](https://github.com/dragos/dragos-vscode-scala/issues/24).
+- Added sbt ensimeConfig.
+
 ## 0.1.2 (March 4, 2017)
 
 - Added disclaimer
