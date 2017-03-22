@@ -2,7 +2,7 @@
     "name": "scala-lsp",
     "displayName": "Scala Language Server",
     "description": "A Scala language server based on Ensime",
-    "icon": "images/scala-logo-128.png",
+    "icon": "images/scala-logo.png",
     "version": "0.1.3",
     "repository": {
         "url": "https://github.com/dragos/dragos-vscode-scala"
