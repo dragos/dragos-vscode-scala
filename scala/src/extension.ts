@@ -2,6 +2,7 @@
 
 import * as path from 'path';
 import * as VSCode from 'vscode';
+import * as URL from 'url';
 
 import { workspace, ExtensionContext, window } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
@@ -33,8 +34,20 @@ export async function activate(context: ExtensionContext) {
 
   console.log('Workspace location is: ' + workspace.rootPath);
 
+  let proxyArgs = []
+  let proxySettings = workspace.getConfiguration().get('http.proxy').toString();
+  if(proxySettings != '') {
+    console.log('Using proxy: '+proxySettings);
+    let proxyUrl = URL.parse(proxySettings);
+    let javaProxyHttpHost = '-Dhttp.proxyHost='+proxyUrl.hostname
+    let javaProxyHtppPort = '-Dhttp.proxyPort='+proxyUrl.port
+    let javaProxyHttpsHost = '-Dhttps.proxyHost='+proxyUrl.hostname
+    let javaProxyHttpsPort = '-Dhttps.proxyPort='+proxyUrl.port
+    proxyArgs = [javaProxyHttpHost,javaProxyHtppPort,javaProxyHttpsHost,javaProxyHttpsPort]
+  } else proxyArgs = []
+
   let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:snapshots', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.11:0.1.1-SNAPSHOT', '-M', 'org.github.dragos.vscode.Main'];
-  let javaArgs = ['-Dvscode.workspace=' + workspace.rootPath, '-jar', coursierPath].concat(coursierArgs);
+  let javaArgs = proxyArgs.concat(['-Dvscode.workspace=' + workspace.rootPath, '-jar', coursierPath]).concat(coursierArgs);
   // The debug options for the server
   let debugOptions = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y'];
 
