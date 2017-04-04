@@ -26,7 +26,7 @@ class TempFileStore(val path: String) extends LazyLogging {
     case RawFile(path) => Success(path)
     case ArchiveFile(jar, entry) => Try {
       logger.info(s"Extracting $jar!$entry to $rootPath")
-      val uri = URI.create(s"jar:file:$jar")
+      val uri = URI.create(s"jar:${jar.toFile.toURI.toString}")
       val zipFile = FileSystems.newFileSystem(uri, new java.util.HashMap[String, String])
       val zipFilePath = zipFile.getPath(entry)
       val targetPath = if (entry.startsWith("/")) entry.drop(1) else entry
