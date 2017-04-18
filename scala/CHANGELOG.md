@@ -2,6 +2,8 @@
 
 ## 0.1.x (MM DD, YYYY)
 
+- add proxy settings for Coursier download. Use `"http.proxy": "http://host:port/"` in the VS Code settings file.
+
 ## 0.1.3 (March 12, 2017)
 
 - Added JAVA_HOME detection. See [#23](https://github.com/dragos/dragos-vscode-scala/issues/23), [#24](https://github.com/dragos/dragos-vscode-scala/issues/24).
