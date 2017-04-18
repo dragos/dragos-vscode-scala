@@ -60,10 +60,12 @@ You can open code inside the `scala/` directory and use `F5` to debug the extens
 
 ## Settings
 
-If VSCode is running behind a proxy add the following standard VSCode proxy settings (File -> Preference -> Settings):
+If VSCode is running behind a proxy add the following standard VSCode proxy settings (File -> Preferences -> Settings):
 
 {
+
     "http.proxy": "http://host:port/"
+    
 }
 
 This setting is translated as Coursier's vm arguments: -Dhttp.proxyHost=host -Dhttps.proxyHost=host -Dhttp.proxyPort=port -Dhttps.proxyPort=port.
