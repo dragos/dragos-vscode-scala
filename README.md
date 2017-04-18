@@ -57,3 +57,13 @@ You should use `sbt publishLocal` which publishes the server under `~/.ivy2/loca
 ## Running
 
 You can open code inside the `scala/` directory and use `F5` to debug the extension. This picks up the changes in the server (make sure you published it locally using `sbt publishLocal`!) and allows quick iteration.
+
+## Settings
+
+If VSCode is running behind a proxy add the following standard VSCode proxy settings (File -> Preferences -> Settings):
+
+{
+    "http.proxy": "http://host:port/"
+}
+
+This setting is translated as Coursier's vm arguments: -Dhttp.proxyHost=host -Dhttps.proxyHost=host -Dhttp.proxyPort=port -Dhttps.proxyPort=port.
