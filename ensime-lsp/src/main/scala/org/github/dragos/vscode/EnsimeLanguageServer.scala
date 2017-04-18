@@ -16,9 +16,7 @@ import org.ensime.api.TypecheckFileReq
 import org.ensime.config.EnsimeConfigProtocol
 import org.ensime.core._
 import org.ensime.util.file._
-
-import com.google.common.base.Charsets
-import com.google.common.io.Files
+import org.ensime.util.path._
 
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
@@ -85,7 +83,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     val ensimeFile = new File(s"$rootPath/.ensime")
 
     val configT = Try {
-      EnsimeConfigProtocol.parse(Files.toString(ensimeFile, Charsets.UTF_8))
+      EnsimeConfigProtocol.parse(ensimeFile.toPath.readString()(MessageReader.Utf8Charset))
     }
 
     configT match {
