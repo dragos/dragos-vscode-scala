@@ -46,7 +46,7 @@ export async function activate(context: ExtensionContext) {
     proxyArgs = [javaProxyHttpHost,javaProxyHtppPort,javaProxyHttpsHost,javaProxyHttpsPort]
   } else proxyArgs = []
 
-  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:snapshots', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.11:0.1.1-SNAPSHOT', '-M', 'org.github.dragos.vscode.Main'];
+  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:snapshots', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.11:0.1.2-SNAPSHOT', '-M', 'org.github.dragos.vscode.Main'];
   let javaArgs = proxyArgs.concat(['-Dvscode.workspace=' + workspace.rootPath, '-jar', coursierPath]).concat(coursierArgs);
   // The debug options for the server
   let debugOptions = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y'];
