@@ -6,6 +6,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.URI
+import java.nio.file.Paths
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -159,7 +160,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
 
     for {
       doc <- documentManager.allOpenDocuments
-      path = new URI(doc.uri).getRawPath()
+      path = Paths.get(new URI(doc.uri)).toString
     } connection.publishDiagnostics(doc.uri, byFile.get(path).toList.flatten.map(toDiagnostic))
   }
 
