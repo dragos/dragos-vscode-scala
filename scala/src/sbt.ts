@@ -57,6 +57,10 @@ export class Sbt {
     const runSbtEnsimeConfig = () => {
       runSbtCommand(['ensimeConfig']);
     };
+    
+    const runSbtscalariformFormat = () => {
+      runSbtCommand(['scalariformFormat']);
+    };
 
     const registerCommands = (ctx: ExtensionContext) => {
       ctx.subscriptions.push(
@@ -67,7 +71,8 @@ export class Sbt {
         commands.registerCommand('sbt.clean', runSbtClean),
         commands.registerCommand('sbt.reload', runSbtReload),
         commands.registerCommand('sbt.package', runSbtPackage),
-        commands.registerCommand('sbt.ensimeConfig', runSbtEnsimeConfig)
+        commands.registerCommand('sbt.ensimeConfig', runSbtEnsimeConfig),
+        commands.registerCommand('sbt.scalariformFormat', runSbtscalariformFormat)
       );
     };
 
