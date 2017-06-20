@@ -9,7 +9,7 @@ pomIncludeRepository := { _ => false }
 
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
-  version := "0.1.2-SNAPSHOT",
+  version := "0.1.3",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
@@ -63,7 +63,7 @@ lazy val `ensime-lsp` = project.
   settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "org.ensime" %% "core" % "2.0.0-SNAPSHOT"
+      "org.ensime" %% "core" % "2.0.0-M2"
     ),
     pomExtra in Global := {
       <url>https://github.com/dragos/dragos-vscode-scala/</url>

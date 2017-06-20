@@ -167,9 +167,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   override def shutdown() {
     logger.info("Shutdown request")
 //    ensimeActor ! ShutdownRequest("Requested by client")
-    system.shutdown()
+    system.terminate()
     logger.info("Shutting down actor system.")
-    system.awaitTermination()
+    Await.result(system.whenTerminated, Duration.Inf)
     logger.info("Actor system down.")
   }
 
