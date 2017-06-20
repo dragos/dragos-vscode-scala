@@ -67,3 +67,12 @@ If VSCode is running behind a proxy add the following standard VSCode proxy sett
 }
 
 This setting is translated as Coursier's vm arguments: -Dhttp.proxyHost=host -Dhttps.proxyHost=host -Dhttp.proxyPort=port -Dhttps.proxyPort=port.
+
+# Publish
+
+```
+> publishSigned
+> sonatypeRelease
+```
+
+Then `cd scala/` and run `vsce publish`
