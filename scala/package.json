@@ -3,7 +3,7 @@
 	"displayName": "Scala Language Server",
 	"description": "A Scala language server based on Ensime",
 	"icon": "images/scala-logo.png",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"repository": {
 		"url": "https://github.com/dragos/dragos-vscode-scala"
 	},
@@ -18,7 +18,7 @@
 		"Languages"
 	],
 	"activationEvents": [
-		"onLanguage:scala",
+		"workspaceContains:.ensime",
 		"onCommand:sbt.update",
 		"onCommand:sbt.compile",
 		"onCommand:sbt.run",
