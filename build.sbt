@@ -1,7 +1,7 @@
 name := "vscode-scala"
 
 
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.11.11"
 
 publishMavenStyle := true
 publishArtifact in Test := false
@@ -63,7 +63,7 @@ lazy val `ensime-lsp` = project.
   settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "org.ensime" %% "core" % "2.0.0-M2"
+      "org.ensime" %% "core" % "2.0.0-M3"
     ),
     pomExtra in Global := {
       <url>https://github.com/dragos/dragos-vscode-scala/</url>
