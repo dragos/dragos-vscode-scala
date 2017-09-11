@@ -10,7 +10,6 @@ object Main extends LazyLogging {
     val cwd = System.getProperty("vscode.workspace")
     logger.info(s"Starting server in $cwd")
     logger.info(s"Classpath: ${Properties.javaClassPath}")
-    logger.info(s"LogLevel: ${Option(System.getProperty("vscode.logLevel")).getOrElse("")}")
 
     val server = new EnsimeLanguageServer(System.in, System.out)
 
@@ -24,19 +23,6 @@ object Main extends LazyLogging {
       server.start()
     } finally {
       System.setOut(origOut)
-    }
-
-    logger.underlying match {
-      case logbackLogger:ch.qos.logback.classic.Logger => 
-        val logLevel = Option(System.getProperty("vscode.logLevel"))
-        logLevel match{
-          case Some("ERROR") => logbackLogger.setLevel(ch.qos.logback.classic.Level.ERROR)
-          case Some("INFO") => logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO)
-          case Some("DEBUG") => logbackLogger.setLevel(ch.qos.logback.classic.Level.DEBUG)
-          case Some("WARN") => logbackLogger.setLevel(ch.qos.logback.classic.Level.WARN)
-          case _ =>
-        }
-      case _ =>
     }
 
     // make sure we actually exit
