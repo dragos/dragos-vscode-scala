@@ -2,6 +2,7 @@ package org.github.dragos.vscode.ensime
 
 import akka.actor._
 import org.ensime.api.EnsimeConfig
+import org.ensime.api.EnsimeServerConfig
 import org.github.dragos.vscode.EnsimeLanguageServer
 import langserver.messages.MessageType
 import com.typesafe.scalalogging.LazyLogging
@@ -12,7 +13,7 @@ import scala.concurrent.duration._
  *
  * It catches `ActorInitializationError` and tries to restart it.
  */
-class EnsimeActor(langServer: EnsimeLanguageServer, config: EnsimeConfig) extends Actor with LazyLogging {
+class EnsimeActor(langServer: EnsimeLanguageServer, config: EnsimeConfig, ensimeServerConfig:EnsimeServerConfig) extends Actor with LazyLogging {
 
   private var project: ActorRef = _
 
@@ -32,10 +33,10 @@ class EnsimeActor(langServer: EnsimeLanguageServer, config: EnsimeConfig) extend
         // trying to catch this elusive ActorInitializationException by creating this actor as late
         // as possible. Still, it looks like the supervisor strategy does not get this crash
         logger.info("Starting problematic actor now")
-        project = context.actorOf(Props(new EnsimeProjectServer(langServer, config)), "ensimeProject")
+        project = context.actorOf(Props(new EnsimeProjectServer(langServer, config, ensimeServerConfig)), "ensimeProject")
         logger.info(s"Created: $project")
       }
-
+      
       project forward message
   }
 }

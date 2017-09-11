@@ -7,7 +7,7 @@ import org.ensime.api._
 import org.ensime.api.EnsimeConfig
 import org.ensime.core.Broadcaster
 import org.ensime.core.Project
-
+import org.ensime.api.EnsimeServerConfig
 import com.typesafe.scalalogging.LazyLogging
 
 import akka.actor.Actor
@@ -19,7 +19,9 @@ import langserver.messages.MessageType
 import org.github.dragos.vscode.EnsimeLanguageServer
 import akka.actor.TypedActor.PostStop
 
-class EnsimeProjectServer(langServer: EnsimeLanguageServer, implicit val config: EnsimeConfig) extends Actor with LazyLogging {
+class EnsimeProjectServer(langServer: EnsimeLanguageServer, 
+                          implicit val config: EnsimeConfig, 
+                          implicit val ensimeServerConfig:EnsimeServerConfig) extends Actor with LazyLogging {
   implicit val timeout: Timeout = Timeout(10 seconds)
 
   val broadcaster = context.actorOf(Broadcaster(), "broadcaster")
