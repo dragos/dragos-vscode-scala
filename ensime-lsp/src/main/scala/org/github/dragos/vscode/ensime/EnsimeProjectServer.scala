@@ -21,7 +21,7 @@ import akka.actor.TypedActor.PostStop
 
 class EnsimeProjectServer(langServer: EnsimeLanguageServer, 
                           implicit val config: EnsimeConfig, 
-                          implicit val ensimeServerConfig:EnsimeServerConfig) extends Actor with LazyLogging {
+                          implicit val ensimeServerConfig: EnsimeServerConfig) extends Actor with LazyLogging {
   implicit val timeout: Timeout = Timeout(10 seconds)
 
   val broadcaster = context.actorOf(Broadcaster(), "broadcaster")

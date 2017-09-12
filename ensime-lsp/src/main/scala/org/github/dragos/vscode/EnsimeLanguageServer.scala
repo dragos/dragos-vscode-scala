@@ -40,7 +40,7 @@ import java.nio.charset.Charset
 import langserver.core.MessageReader
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
-  private var system:ActorSystem = _
+  private var system: ActorSystem = _
   private var fileStore: TempFileStore = _
 
   // Ensime root actor
