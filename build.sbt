@@ -1,7 +1,7 @@
 name := "vscode-scala"
 
 
-scalaVersion in ThisBuild := "2.11.11"
+scalaVersion in ThisBuild := "2.12.3"
 
 publishMavenStyle := true
 publishArtifact in Test := false
@@ -9,10 +9,10 @@ pomIncludeRepository := { _ => false }
 
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
-  version := "0.1.4-SNAPSHOT",
+  version := "0.1.7-SNAPSHOT",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   ),
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
@@ -27,8 +27,8 @@ lazy val languageserver = project.
   settings(commonSettings).
   settings(
     libraryDependencies ++= Seq(
-      "com.dhpcs" %% "play-json-rpc" % "1.3.0",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+      "com.dhpcs" %% "scala-json-rpc" % "2.0.0",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2",
       "org.slf4j" % "slf4j-api" % "1.7.21",
       "ch.qos.logback" %  "logback-classic" % "1.1.7",
       "org.codehaus.groovy" % "groovy" % "2.4.0"
@@ -63,7 +63,7 @@ lazy val `ensime-lsp` = project.
   settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "org.ensime" %% "core" % "2.0.0-M3"
+      "org.ensime" %% "core" % "2.0.0-M4"
     ),
     pomExtra in Global := {
       <url>https://github.com/dragos/dragos-vscode-scala/</url>

@@ -68,6 +68,14 @@ If VSCode is running behind a proxy add the following standard VSCode proxy sett
 
 This setting is translated as Coursier's vm arguments: -Dhttp.proxyHost=host -Dhttps.proxyHost=host -Dhttp.proxyPort=port -Dhttps.proxyPort=port.
 
+Log level settting:
+{
+    "scalaLanguageServer.logLevel" : "DEBUG"
+}
+
+This setting is passed to the Language Server affecting the log leven on the server, possible values "DEBUG", "ERROR", "INFO", "WARN"
+
+
 # Publish
 
 ```

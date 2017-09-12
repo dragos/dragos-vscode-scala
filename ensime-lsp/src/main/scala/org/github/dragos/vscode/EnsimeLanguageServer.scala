@@ -18,7 +18,10 @@ import org.ensime.config.EnsimeConfigProtocol
 import org.ensime.core._
 import org.ensime.util.file._
 import org.ensime.util.path._
-
+import org.ensime.config._
+import org.ensime.config.richconfig._
+import org.ensime.core.Canon
+import com.typesafe.config._
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
@@ -37,7 +40,7 @@ import java.nio.charset.Charset
 import langserver.core.MessageReader
 
 class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageServer(in, out) {
-  private val system = ActorSystem("ENSIME")
+  private var system: ActorSystem = _
   private var fileStore: TempFileStore = _
 
   // Ensime root actor
@@ -80,12 +83,26 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     )
   }
 
+  def loadConfig(ensimeFile:File): Config = {
+    val config = s"""ensime.config = "${ensimeFile.toString}" """
+    val fallback = ConfigFactory.parseString(config)
+    ConfigFactory.load().withFallback(fallback)
+  }  
+
   private def initializeEnsime(rootPath: String): Try[EnsimeConfig] = {
     val ensimeFile = new File(s"$rootPath/.ensime")
 
     val configT = Try {
-      EnsimeConfigProtocol.parse(ensimeFile.toPath.readString()(MessageReader.Utf8Charset))
+      val config = loadConfig(ensimeFile)
+      system = ActorSystem("ENSIME", config)
+      val serverConfig: EnsimeServerConfig = parseServerConfig(config)
+      val ensimeConfig = EnsimeConfigProtocol.parse(serverConfig.config.file.readString()(MessageReader.Utf8Charset))
+      Canon.config = ensimeConfig
+      Canon.serverConfig = serverConfig      
+      (ensimeConfig, serverConfig)
     }
+
+    configT.recover{case e => logger.error(s"initializeEnsime Error: ${e.getMessage}"); e.printStackTrace}
 
     configT match {
       case Failure(e) =>
@@ -93,16 +110,21 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
           connection.showMessage(MessageType.Error, s"Error parsing .ensime: ${e.getMessage}")
         else
           connection.showMessage(MessageType.Error, s"No .ensime file in directory. Run `sbt ensimeConfig` to create one.")
-      case Success(config) =>
+      case Success((config, serverConfig)) =>
         //showMessage(MessageType.Info, s"Using configuration: $ensimeFile")
         logger.info(s"Using configuration: $config")
-        fileStore = new TempFileStore(config.cacheDir.toString)
-        ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config), "server")
-
-        // we don't give a damn about them, but Ensime expects it
+        val t = Try{
+          fileStore = new TempFileStore(config.cacheDir.file.toString)
+          ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config, serverConfig), "server")
+        }
+        t.recover{case e => 
+          logger.error(s"initializeEnsime: ${e.getMessage}"); e.printStackTrace
+          connection.showMessage(MessageType.Error, s"Error creating storage: ${e.getMessage}")
+        }
+          // we don't give a damn about them, but Ensime expects it
         ensimeActor ! ConnectionInfoReq
     }
-    configT
+    configT.map(_._1)
   }
 
   override def onChangeWatchedFiles(changes: Seq[FileEvent]): Unit = changes match {
@@ -194,7 +216,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     res.map(f => CompletionList(false, Await.result(f, 5 seconds))) getOrElse CompletionList(false, Nil)
   }
 
-  override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): Seq[Location] = {
+  override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): LocationSeq = {
     import scala.concurrent.ExecutionContext.Implicits._
     logger.info(s"Got goto definition request at (${position.line}, ${position.character}).")
 
@@ -230,7 +252,8 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
       }
     }
 
-    res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location]
+    val r = (res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location])
+    LocationSeq(r)
   }
 
   override def hoverRequest(textDocument: TextDocumentIdentifier, position: Position): Hover = {

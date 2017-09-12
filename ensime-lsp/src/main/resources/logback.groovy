@@ -1,3 +1,4 @@
+
 def WORKSPACE_LOCATION = System.getProperty("vscode.workspace")
 
 if (WORKSPACE_LOCATION == null)
@@ -11,9 +12,16 @@ appender("FILE", FileAppender) {
   }
 }
 
+def logLevel = System.getProperty("vscode.logLevel")
+def LOG_LEVEL = DEBUG
+     if(logLevel == "ERROR") LOG_LEVEL = ERROR
+else if(logLevel == "INFO")  LOG_LEVEL = INFO  
+else if(logLevel == "WARN")  LOG_LEVEL = WARN   
+else LOG_LEVEL = DEBUG
+
 root(INFO, ["FILE"])
 logger("slick", ERROR, ["FILE"])
-logger("org.github.dragos.vscode", DEBUG, ["FILE"])
-logger("langserver.core", INFO, ["FILE"])
+logger("org.github.dragos.vscode", LOG_LEVEL, ["FILE"])
+logger("langserver.core", LOG_LEVEL, ["FILE"])
 logger("scala.tools.nsc", ERROR, ["FILE"])
 logger("com.zaxxer.hikari", ERROR, ["FILE"])
