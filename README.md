@@ -73,7 +73,7 @@ Log level settting:
     "scalaLanguageServer.logLevel" : "DEBUG"
 }
 
-This setting is passed to the Language Server affecting the log leven on the server, possible values "DEBUG", "ERROR", "INFO", "WARN"
+This setting is passed to the Language Server affecting the log level on the server, possible values "DEBUG", "ERROR", "INFO", "WARN"
 
 
 # Publish

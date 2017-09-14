@@ -216,7 +216,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     res.map(f => CompletionList(false, Await.result(f, 5 seconds))) getOrElse CompletionList(false, Nil)
   }
 
-  override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): LocationSeq = {
+  override def gotoDefinitionRequest(textDocument: TextDocumentIdentifier, position: Position): DefinitionResult = {
     import scala.concurrent.ExecutionContext.Implicits._
     logger.info(s"Got goto definition request at (${position.line}, ${position.character}).")
 
@@ -252,8 +252,8 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
       }
     }
 
-    val r = (res.map { f =>  Await.result(f, 5 seconds) } getOrElse Seq.empty[Location])
-    LocationSeq(r)
+    val locs = res.map { f =>  Await.result(f, 5 seconds) } getOrElse Vector.empty[Location]
+    DefinitionResult(locs)
   }
 
   override def hoverRequest(textDocument: TextDocumentIdentifier, position: Position): Hover = {
