@@ -9,7 +9,7 @@ pomIncludeRepository := { _ => false }
 
 lazy val commonSettings = Seq(
   organization := "com.github.dragos",
-  version := "0.1.7-SNAPSHOT",
+  version := "0.2.0",
   resolvers += "dhpcs at bintray" at "https://dl.bintray.com/dhpcs/maven",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"

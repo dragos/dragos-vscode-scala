@@ -1,6 +1,16 @@
 # Change Log
 
-## 0.1.x (MM DD, YYYY)
+## 0.2.0 (Sept 19, 2017)
+
+- Add Scala 2.12 support (based on Ensime 2.0-M4)
+- Customizable log level
+
+## 0.1.6 (June 20, 2017)
+
+- Only start the VSCode extension when a .ensime file exists (#47)
+- Added support for scalariformFormat (#44)
+
+## 0.1.4 (April 18, 2017)
 
 - add proxy settings for Coursier download. Use `"http.proxy": "http://host:port/"` in the VS Code settings file.
 
