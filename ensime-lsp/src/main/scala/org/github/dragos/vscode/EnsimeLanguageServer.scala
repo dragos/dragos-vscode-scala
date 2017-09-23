@@ -84,7 +84,8 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   }
 
   def loadConfig(ensimeFile:File): Config = {
-    val config = s"""ensime.config = "${ensimeFile.toString}" """
+    // Replace occurances of \ with /, otherwise ConfigFactory.parseString() fails on Windows due to path separators
+    val config = s"""ensime.config = "${ensimeFile.toString}" """.replace('\\', '/')
     val fallback = ConfigFactory.parseString(config)
     ConfigFactory.load().withFallback(fallback)
   }  
