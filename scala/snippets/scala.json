@@ -10,15 +10,15 @@
 		"prefix": "resolvers",
 		"body": [
 			"resolvers += ",
-  		"	\"${name: Repository name}\" at \"${url: Url where the repository is defined}\""
+			"\"${1:Repository name}\" at \"${2:Url where the repository is defined}\""
 		]
 	},
 
 	"New ScalaTest suite": {
 		"prefix": "suite",
 		"body": [
-			"class ${MyTestSuite} extends FunSuite {",
-			"  test(\"${test name}\") {",
+			"class ${1:MyTestSuite} extends FunSuite {",
+			"  test(\"${2:Test name}\") {",
 			"  }",
 			"}"
 		]
