@@ -84,7 +84,9 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   }
 
   def loadConfig(ensimeFile:File): Config = {
-    val config = s"""ensime.config = "${ensimeFile.toString}" """
+    val fileName = ensimeFile.getCanonicalFile.toString.replaceAllLiterally("\\","/")
+    val config = s"""ensime.config = "$fileName" """
+    logger.debug(config)
     val fallback = ConfigFactory.parseString(config)
     ConfigFactory.load().withFallback(fallback)
   }
