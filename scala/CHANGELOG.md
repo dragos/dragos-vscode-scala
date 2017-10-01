@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.1 (Oct 1, 2017)
+
+- Fix configuration path on Windows (#62)
+- Use placeholders in snippets (#64)
+
 ## 0.2.0 (Sept 19, 2017)
 
 - Add Scala 2.12 support (based on Ensime 2.0-M4)
