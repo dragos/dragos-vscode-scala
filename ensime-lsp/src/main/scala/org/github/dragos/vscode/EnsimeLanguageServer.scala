@@ -287,8 +287,8 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
           Some(typeInfo.fullName)
       }
 
-      for{ftp <- futureDocStrOpt; fdp <- futureTypeStrOpt}  yield {
-        val sig = ftp.orElse(fdp).getOrElse("")
+      for{fdStrOpt <- futureDocStrOpt; ftStrOpt <- futureTypeStrOpt} yield {
+        val sig = fdStrOpt.orElse(ftStrOpt).getOrElse("")
         Hover(Seq(RawMarkedString("scala", sig)), Some(Range(position, position)))
       }
     }
