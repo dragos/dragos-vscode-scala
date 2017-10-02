@@ -262,34 +262,37 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     import scala.concurrent.ExecutionContext.Implicits._
     logger.info(s"Got hover request at (${position.line}, ${position.character}).")
 
-    // val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
-    //   val pos = doc.positionToOffset(position)
-    //   val future = ensimeActor ? TypeAtPointReq(
-    //     Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
-    //     OffsetRange(pos, pos))
-
-    //   future.onComplete { f => logger.debug(s"Goto Definition future completed: succes? ${f.isSuccess}") }
-
-    //   future.map {
-    //     case typeInfo: TypeInfo =>
-    //       logger.info(s"Retrieved typeInfo $typeInfo")
-    //       Hover(Seq(RawMarkedString("scala", typeInfo.toString)), Some(Range(position, position)))
-    //   }
-    // }
     val res = for (doc <- documentManager.documentForUri(textDocument.uri)) yield {
-      val future = ensimeActor ? DocUriAtPointReq(
+      val pos = doc.positionToOffset(position)
+
+      val futureDocUriAtPoint = ensimeActor ? DocUriAtPointReq(
         Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
-        OffsetRange(doc.positionToOffset(position)))
-
-      future.onComplete { f => logger.debug(s"DocUriAtPointReq future completed: succes? ${f.isSuccess}") }
-
-      future.map {
+        OffsetRange(pos))      
+      futureDocUriAtPoint.onComplete { f => logger.debug(s"DocUriAtPointReq future completed: succes? ${f.isSuccess}") }
+      val futureDocStrOpt = futureDocUriAtPoint.map {
         case Some(sigPair @ DocSigPair(DocSig(_, scalaSig), DocSig(_, javaSig))) =>
           val sig = scalaSig.orElse(javaSig).getOrElse("")
           logger.info(s"Retrieved signature $sig from @sigPair")
-          Hover(Seq(RawMarkedString("scala", sig)), Some(Range(position, position)))
+          Some(sig).filter(_ != "")
+      }
+
+      val futureTypeAtPoint = ensimeActor ? TypeAtPointReq(
+        Right(toSourceFileInfo(textDocument.uri, Some(new String(doc.contents)))),
+        OffsetRange(pos, pos))
+      futureTypeAtPoint.onComplete { f => logger.debug(s"TypeAtPointReq future completed: succes? ${f.isSuccess}") }
+      val futureTypeStrOpt = futureTypeAtPoint.map {
+        case typeInfo: TypeInfo =>
+          logger.info(s"Retrieved typeInfo $typeInfo")
+          // Some(typeInfo.name)
+          Some(typeInfo.fullName)
+      }
+
+      for{fdStrOpt <- futureDocStrOpt; ftStrOpt <- futureTypeStrOpt} yield {
+        val sig = fdStrOpt.orElse(ftStrOpt).getOrElse("")
+        Hover(Seq(RawMarkedString("scala", sig)), Some(Range(position, position)))
       }
     }
+    
     res.map { f =>  Await.result(f, 5 seconds) } getOrElse Hover(Nil, None)
   }
 

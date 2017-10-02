@@ -1,4 +1,4 @@
-addSbtPlugin("org.ensime" % "sbt-ensime" % "1.12.0")
+addSbtPlugin("org.ensime" % "sbt-ensime" % "2.0.1")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "1.1")
 

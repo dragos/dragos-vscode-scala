@@ -11,4 +11,5 @@ out/
 *.log
 scala/server/ensimeServer-assembly*
 coursier
+.ensime
 .hydra
