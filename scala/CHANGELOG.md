@@ -4,7 +4,7 @@
 
 - Bumped Ensime Server to release 2.0.0
 - Bumped Ensime SBT to release 2.0.1
-- Fixs for parts of #36 and #37 (Hover tooltip on local vals).
+- Fix for parts of #36 and #37 (Hover tooltip on local vals).
 
 ## 0.2.1 (Oct 1, 2017)
 
