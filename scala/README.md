@@ -14,9 +14,11 @@ If you can't contribute your time but would like to donate, please [donate to th
 
 # Setting up
 
-This extension is based on [Ensime](http://ensime.org), so you need to create an Ensime configuration file before you can use it. This file lists source directories, classpath entries and compiler arguments. If you have an Sbt project just add the [sbt-ensime](http://ensime.org/build_tools/sbt/) plugin and follow the guide (other build tools are [supported](http://ensime.org/build_tools/)). Then just run `sbt ensimeConfig` and voilà!
+This extension is based on [Ensime](http://ensime.org), so you need to create an Ensime configuration file before you can use it. This file lists source directories, classpath entries and compiler arguments. If you have an Sbt project simply add the [sbt-ensime](http://ensime.org/build_tools/sbt/) plugin and follow the guide (other build tools are [supported](http://ensime.org/build_tools/)). Then just run `sbt ensimeConfig` and voilà! You're all set up.
 
-(If you already started Code, it should detect that a new `.ensime` file was created and pick up the project).
+>Remember to regenerate this file everytime you change your build (adding/removing dependencies, compiler arguments, etc.).
+
+If you already started Code, it should detect that a new `.ensime` file was created and pick up the project.
 
 # Setting the JDK
 
