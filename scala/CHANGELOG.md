@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.2
+
+- Bumped Ensime Server to release 2.0.0
+- Bumped Ensime SBT to release 2.0.1
+- Fix for parts of #36 and #37 (Hover tooltip on local vals).
+
 ## 0.2.1 (Oct 1, 2017)
 
 - Fix configuration path on Windows (#62)
