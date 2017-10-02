@@ -49,7 +49,7 @@ export async function activate(context: ExtensionContext) {
   let logLevelStr = ''
   if(logLevel != null) logLevelStr = logLevel.toString()
 
-  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:releases', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.12:0.1.7-SNAPSHOT', '-M', 'org.github.dragos.vscode.Main'];
+  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:releases', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.12:0.2.1', '-M', 'org.github.dragos.vscode.Main'];
   let javaArgs = proxyArgs.concat(['-Dvscode.workspace=' + workspace.rootPath,'-Dvscode.logLevel=' + logLevel, '-jar', coursierPath]).concat(coursierArgs);
   // The debug options for the server
   let debugOptions = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y'];

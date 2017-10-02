@@ -89,7 +89,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
     logger.debug(config)
     val fallback = ConfigFactory.parseString(config)
     ConfigFactory.load().withFallback(fallback)
-  }  
+  }
 
   private def initializeEnsime(rootPath: String): Try[EnsimeConfig] = {
     val ensimeFile = new File(s"$rootPath/.ensime")
@@ -100,7 +100,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
       val serverConfig: EnsimeServerConfig = parseServerConfig(config)
       val ensimeConfig = EnsimeConfigProtocol.parse(serverConfig.config.file.readString()(MessageReader.Utf8Charset))
       Canon.config = ensimeConfig
-      Canon.serverConfig = serverConfig      
+      Canon.serverConfig = serverConfig
       (ensimeConfig, serverConfig)
     }
 
@@ -119,7 +119,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
           fileStore = new TempFileStore(config.cacheDir.file.toString)
           ensimeActor = system.actorOf(Props(classOf[EnsimeActor], this, config, serverConfig), "server")
         }
-        t.recover{case e => 
+        t.recover{case e =>
           logger.error(s"initializeEnsime: ${e.getMessage}"); e.printStackTrace
           connection.showMessage(MessageType.Error, s"Error creating storage: ${e.getMessage}")
         }
@@ -172,7 +172,7 @@ class EnsimeLanguageServer(in: InputStream, out: OutputStream) extends LanguageS
   }
 
   override def onCloseTextDocument(td: TextDocumentIdentifier) = {
-    logger.debug("Removing ${td.uri} from Ensime.")
+    logger.debug(s"Removing ${td.uri} from Ensime.")
     val doc = documentManager.documentForUri(td.uri)
     doc.map(d => ensimeActor ! RemoveFileReq(d.toFile))
   }

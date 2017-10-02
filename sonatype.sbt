@@ -1,1 +1,1 @@
-//sonatypeProfileName := "dragos"
+sonatypeProfileName := "com.github.dragos"
