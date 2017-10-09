@@ -47,10 +47,21 @@ export async function activate(context: ExtensionContext) {
   } else proxyArgs = []
   let logLevel = workspace.getConfiguration().get('scalaLanguageServer.logLevel')
   let logLevelStr = ''
-  if(logLevel != null) logLevelStr = logLevel.toString()
+  if (logLevel != null) logLevelStr = logLevel.toString()
+
+  let heapSize = workspace.getConfiguration().get('scalaLanguageServer.heapSize')
+  let heapSizeStr = '-Xmx768M'
+  if (heapSize != null) heapSizeStr = '-Xmx' + heapSize.toString()
 
   let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:releases', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.12:0.2.1', '-M', 'org.github.dragos.vscode.Main'];
-  let javaArgs = proxyArgs.concat(['-Dvscode.workspace=' + workspace.rootPath,'-Dvscode.logLevel=' + logLevel, '-jar', coursierPath]).concat(coursierArgs);
+
+  let javaArgs = proxyArgs.concat([
+    heapSizeStr,
+    '-Dvscode.workspace=' + workspace.rootPath,
+    '-Dvscode.logLevel=' + logLevel,
+    '-jar', coursierPath
+  ]).concat(coursierArgs);
+
   // The debug options for the server
   let debugOptions = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000,quiet=y'];
 

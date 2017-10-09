@@ -2,6 +2,7 @@
 
 ## 0.2.2
 
+- Configurable heap size for the language server (default 768M instead of 4G)
 - Bumped Ensime Server to release 2.0.0
 - Bumped Ensime SBT to release 2.0.1
 - Fix for parts of #36 and #37 (Hover tooltip on local vals).
