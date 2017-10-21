@@ -31,6 +31,22 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Scala Language Server configuration",
+			"properties": {
+				"scalaLanguageServer.logLevel": {
+					"type": ["string", "null"],
+					"default": null,
+					"description": "Log level of the Scala Language Server. Possible values are \"DEBUG\", \"ERROR\", \"INFO\", and \"WARN\"."
+				},
+				"scalaLanguageServer.heapSize": {
+					"type": ["string"],
+					"default": "768m",
+					"description": "Heap size used by the Scala Language Server. For example \"512m\" or \"4G\"."
+				}
+			}
+		},
 		"languages": [
 			{
 				"id": "scala",
