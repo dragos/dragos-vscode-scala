@@ -1,6 +1,11 @@
 # Change Log
 
-## 0.2.2
+## 0.2.3 (April 25, 2018)
+
+- Activate Scala LSP only on local files
+- Bump Ensime to 2.0.1
+
+## 0.2.2 (Oct 9, 2017)
 
 - Configurable heap size for the language server (default 768M instead of 4G)
 - Bumped Ensime Server to release 2.0.0
