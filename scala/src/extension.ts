@@ -53,12 +53,13 @@ export async function activate(context: ExtensionContext) {
   let heapSizeStr = '-Xmx768M'
   if (heapSize != null) heapSizeStr = '-Xmx' + heapSize.toString()
 
-  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:releases', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.12:0.2.1', '-M', 'org.github.dragos.vscode.Main'];
+  let coursierArgs = ['launch', '-r', 'https://dl.bintray.com/dhpcs/maven', '-r', 'sonatype:releases', '-J', toolsJar, 'com.github.dragos:ensime-lsp_2.12:0.2.3', '-M', 'org.github.dragos.vscode.Main'];
 
   let javaArgs = proxyArgs.concat([
     heapSizeStr,
     '-Dvscode.workspace=' + workspace.rootPath,
     '-Dvscode.logLevel=' + logLevel,
+    '-Densime.index.no.reverse.lookups=true',
     '-jar', coursierPath
   ]).concat(coursierArgs);
 
