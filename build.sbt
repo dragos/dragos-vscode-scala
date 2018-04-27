@@ -40,11 +40,6 @@ lazy val languageserver = project.
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
       </licenses>
-      <scm>
-        <connection>scm:git:github.com/dragos/dragos-vscode-scala.git</connection>
-        <developerConnection>scm:git:git@github.com:dragos/dragos-vscode-scala.git</developerConnection>
-        <url>github.com/dragos/dragos-vscode-scala.git</url>
-      </scm>
       <developers>
         <developer>
           <id>dragos</id>
@@ -64,7 +59,7 @@ lazy val `ensime-lsp` = project.
     libraryDependencies ++= Seq(
       "org.ensime" %% "core" % "2.0.1"
     ),
-    pomExtra in Global := {
+    pomExtra := {
       <url>https://github.com/dragos/dragos-vscode-scala/</url>
       <licenses>
         <license>
@@ -72,11 +67,6 @@ lazy val `ensime-lsp` = project.
           <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
         </license>
       </licenses>
-      <scm>
-        <connection>scm:git:github.com/dragos/dragos-vscode-scala.git</connection>
-        <developerConnection>scm:git:git@github.com:dragos/dragos-vscode-scala.git</developerConnection>
-        <url>github.com/dragos/dragos-vscode-scala.git</url>
-      </scm>
       <developers>
         <developer>
           <id>dragos</id>
