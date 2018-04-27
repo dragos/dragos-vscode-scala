@@ -14,6 +14,18 @@ If you can't contribute your time but would like to donate, please [donate to th
 
 # Setting up
 
+> It only supports Scala 2.12 projects for the moment (it might work to some extent with 2.11 if you're not using macros)
+
+tl;dr;
+
+```
+// add sbt-ensime to your build or in global.sbt
+addSbtPlugin("org.ensime" % "sbt-ensime" % "2.5.1")
+
+// then generate ensime configuration
+sbt ensimeConfig
+```
+
 This extension is based on [Ensime](http://ensime.org), so you need to create an Ensime configuration file before you can use it. This file lists source directories, classpath entries and compiler arguments. If you have an Sbt project simply add the [sbt-ensime](http://ensime.org/build_tools/sbt/) plugin and follow the guide (other build tools are [supported](http://ensime.org/build_tools/)). Then just run `sbt ensimeConfig` and voilà! You're all set up.
 
 >Remember to regenerate this file everytime you change your build (adding/removing dependencies, compiler arguments, etc.).
