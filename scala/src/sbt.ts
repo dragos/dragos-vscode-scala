@@ -18,6 +18,7 @@ export class Sbt {
     const runSbtCommand = (args: string[], cwd?: string) => {
       workspace.saveAll().then(() => {
         if (!cwd) {
+          // tslint:disable-next-line:no-parameter-reassignment
           cwd = workspace.rootPath;
         }
         if (typeof window.createTerminal === 'function') {
@@ -72,7 +73,7 @@ export class Sbt {
         commands.registerCommand('sbt.reload', runSbtReload),
         commands.registerCommand('sbt.package', runSbtPackage),
         commands.registerCommand('sbt.ensimeConfig', runSbtEnsimeConfig),
-        commands.registerCommand('sbt.scalariformFormat', runSbtscalariformFormat)
+        commands.registerCommand('sbt.scalariformFormat', runSbtscalariformFormat),
       );
     };
 
@@ -83,4 +84,4 @@ export class Sbt {
     // NOP
   }
 
-};
+}
