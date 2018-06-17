@@ -103,7 +103,24 @@
                 "title": "scalariformFormat",
                 "category": "sbt"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Scala Language Server configuration",
+            "properties": {
+                "scalaLanguageServer.heapSize": {
+                    "type": "string",
+                    "default": "768M",
+                    "description": "Sets the heap size used by the Scala language server, for example `512M` or `4G`. The default is probably insufficient for larger projects and may be the cause for the language server being unresponsive."
+                },
+                "scalaLanguageServer.logLevel": {
+                    "type": "string",
+                    "default": "DEBUG",
+                    "enum": ["DEBUG", "ERROR", "INFO", "WARN"],
+                    "description": "Sets the log level on the server."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "curl -L -o coursier https://github.com/alexarchambault/coursier/raw/991b60ddbcb7d781c17a463f7af980f2dd888d4b/coursier && tsc -p ./",
