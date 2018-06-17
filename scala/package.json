@@ -48,7 +48,7 @@
             {
                 "language": "scala",
                 "scopeName": "source.scala",
-                "path": "./syntaxes/Scala.tmLanguage"
+                "path": "./syntaxes/scala.tmLanguage"
             }
         ],
         "snippets": [
