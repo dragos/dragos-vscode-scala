@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/dragos/dragos-vscode-scala.svg?branch=master)](https://travis-ci.org/dragos/dragos-vscode-scala)
+[![Hydra](https://img.shields.io/badge/%22%22%22%7CHydra-4%20cpus-brightgreen.svg)](https://www.triplequote.com/hydra)
 
 # Scala language server for VS Code
 
