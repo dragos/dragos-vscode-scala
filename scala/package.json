@@ -106,7 +106,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "curl -L -o coursier https://github.com/alexarchambault/coursier/raw/991b60ddbcb7d781c17a463f7af980f2dd888d4b/coursier && tsc -p ./",
+        "vscode:prepublish": "curl -L -o coursier https://github.com/alexarchambault/coursier/raw/991b60ddbcb7d781c17a463f7af980f2dd888d4b/coursier",
         "compile": "tsc -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
