@@ -6,7 +6,7 @@
 ![demo](code.gif "Demo")
 
 
-This is an experiment for building a Language Server for Scala, in Scala.
+This is an experiment for building a Language Server for Scala, in Scala. **Note**: Only works with Scala 2.12.x.
 
 - language server: A Scala-based implementation of the [language server protocol](https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md)
 - scala: A Typescript-based Scala extension (language client). Ideally it will be ported to Scala.js
